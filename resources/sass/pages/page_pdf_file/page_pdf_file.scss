@@ -1,0 +1,53 @@
+.modal-form-pdf-file-preview {
+    .ant-modal {
+        // width: 600px !important;
+
+        .ant-modal-content {
+            .ant-modal-body {
+                // .react-pdf__Document {
+                //     // .react-pdf__Page {
+                //     //     max-width: 100%;
+
+                //     //     // canvas {
+                //     //     //     max-width: 100%;
+                //     //     // }
+
+                //     //     .react-pdf__Page__annotations {
+                //     //         max-width: 100%;
+                //     //     }
+                //     // }
+                // }
+
+                .action {
+                    display: flex;
+                    justify-content: center;
+                    gap: 8px;
+                }
+            }
+        }
+    }
+}
+
+.modal-form-pdf-file {
+    .ant-modal {
+        .ant-modal-content {
+            .ant-modal-body {
+                .ant-upload-wrapper {
+                    .ant-upload-list {
+                        .ant-upload-list-item-container {
+                            .ant-upload-list-item {
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                .ant-upload-list-item-name {
+                                    flex: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

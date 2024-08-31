@@ -1,0 +1,67 @@
+.layout-client {
+    .ant-layout-header {
+        background: #ff4141;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+
+        .demo-logo {
+            height: 31px;
+            width: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 16px 24px 16px 0;
+        }
+
+        .ant-menu {
+            background: #ff4141;
+            flex: none !important;
+
+            .ant-menu-item {
+                color: #fff;
+                font-size: 18px;
+
+                &:hover {
+                    color: #ffffff;
+                    border-bottom-color: #ffffff;
+                }
+            }
+
+            .ant-menu-item-active {
+                &::after {
+                    border-bottom-width: 2px;
+                    border-bottom-color: #ffffff;
+                }
+            }
+            .ant-menu-item-selected {
+                color: #ffffff;
+
+                &::after {
+                    border-bottom-width: 2px;
+                    border-bottom-color: #ffffff;
+                }
+
+                &:hover {
+                    color: #ffffff;
+                    border-bottom-color: #ffffff;
+                }
+            }
+        }
+    }
+
+    .ant-layout-content {
+        min-height: 100vh;
+    }
+
+    .ant-layout-footer {
+        margin-top: 20px;
+        background: #ff4141;
+        min-height: 150px;
+
+        .ant-typography {
+            color: #ffffff !important;
+        }
+    }
+
+    @include atsm {
+    }
+}

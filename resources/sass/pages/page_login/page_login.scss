@@ -1,0 +1,49 @@
+#PageLogin {
+    // background-color: transparent;
+
+    .ant-layout-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        height: 100vh;
+
+        .ant-card {
+            width: 400px;
+            border-radius: 5px;
+
+            .ant-card-body {
+                .logo-wrapper {
+                    text-align: center;
+                    img {
+                        width: 200px;
+                    }
+                }
+
+                > h4.ant-typography {
+                    text-align: center;
+                }
+
+                .ant-form {
+                    .ant-typography {
+                        float: right;
+                    }
+
+                    .ant-alert {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .ant-layout-footer {
+            background-color: transparent;
+            text-align: center;
+            padding-top: 100px;
+
+            .ant-typography {
+                color: #ffffff;
+            }
+        }
+    }
+}
