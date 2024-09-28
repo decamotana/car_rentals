@@ -64,4 +64,12 @@
 
     @include atsm {
     }
+
+    .clickable-card {
+        &:hover {
+            box-shadow: 1px 1px 8px 3px #ccc;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+    }
 }
