@@ -29,6 +29,10 @@ import PageComponents from "../views/private/PageComponents/PageComponents";
 import PageHome from "../views/clients/PageHome/PageHome";
 import PageCars from "../views/clients/PageCars/PageCars";
 import PageAboutUs from "../views/clients/PageAboutUs/PageAboutUs";
+import PageContactUs from "../views/clients/PageContactUs/PageContactUs";
+import PageRegister from "../views/public/PageRegister/PageRegister";
+import PageSignUp from "../views/clients/SignUp/PageSignUp";
+import PageUsersComponents from "../views/clients/PageUsers/PageUsersComponents";
 
 export default function RouteList() {
     return (
@@ -87,7 +91,7 @@ export default function RouteList() {
                     <ClientRoute
                         title="Contact Us"
                         pageId="PageContactUs"
-                        component={PageAboutUs}
+                        component={PageContactUs}
                         breadcrumb={[
                             {
                                 name: "Home",
@@ -104,6 +108,28 @@ export default function RouteList() {
                         title="Sign In"
                         pageId="PageLogin"
                         component={PageLogin}
+                    />
+                }
+            />
+
+            <Route
+                path="/sign-up"
+                element={
+                    <PublicRoute
+                        title="Sign Up"
+                        pageId="PageSignUp"
+                        component={PageSignUp}
+                    />
+                }
+            />
+
+            <Route
+                path="/userHome"
+                element={
+                    <ClientRoute
+                        title="User Home Page"
+                        pageId="UserHome"
+                        component={PageUsersComponents}
                     />
                 }
             />

@@ -1,15 +1,30 @@
 import React from "react";
 import { Button, Card, Carousel, Col, Row, Typography } from "antd";
+import Fortuner from "../../../../../../../resources/images/Fortuner.jpg";
+import Mux from "../../../../../../../resources/images/mux.jpg";
+import Raptor from "../../../../../../../resources/images/raptor.jpg";
+import NissanProx from "../../../../../../../resources/images/NissanProx.jpg";
 
 export default function PageHomeCars(props) {
     const {} = props;
 
     const contentStyle = {
-        height: "160px",
+        height: "230px",
         color: "#fff",
-        lineHeight: "160px",
+        // lineHeight: "50px",
         textAlign: "center",
-        background: "#364d79",
+        // background: "#364d79",
+    };
+
+    const imageSize = {
+        width: "100%",
+        height: "auto",
+    };
+
+    const reservedClick = () => {
+        // alert("Welcome to sign-in");
+        // console.log('Register');
+        history(`$`);
     };
 
     return (
@@ -17,26 +32,49 @@ export default function PageHomeCars(props) {
             <Row gutter={24}>
                 <Col xs={24} sm={24} md={12}>
                     <Typography.Title>
-                        Welcome to J&A Car Renta
+                        Welcome to J&A Car Rental
                     </Typography.Title>
 
-                    <Button className="btn-main-primary">
+                    <Button
+                        className="btn-main-primary"
+                        onClick={reservedClick}
+                    >
                         Sign up now for Reservation
                     </Button>
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                     <Carousel autoplay>
                         <div>
-                            <h3 style={contentStyle}>1</h3>
+                            <h3 style={contentStyle}>
+                                <img
+                                    src={Fortuner}
+                                    alt="Fortuner"
+                                    style={imageSize}
+                                />
+                            </h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>2</h3>
+                            <h3 style={contentStyle}>
+                                <img src={Mux} alt="Mux" style={imageSize} />
+                            </h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>3</h3>
+                            <h3 style={contentStyle}>
+                                <img
+                                    src={NissanProx}
+                                    alt="Nissan"
+                                    style={imageSize}
+                                />
+                            </h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>4</h3>
+                            <h3 style={contentStyle}>
+                                <img
+                                    src={Raptor}
+                                    alt="Raptor"
+                                    style={imageSize}
+                                />
+                            </h3>
                         </div>
                     </Carousel>
                 </Col>

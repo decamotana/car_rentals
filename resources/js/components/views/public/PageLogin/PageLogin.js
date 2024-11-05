@@ -62,9 +62,11 @@ export default function PageLogin() {
 
             <Card>
                 <div className="logo-wrapper">
-                    <img src={logo} />
+                    {/* <img src={logo} /> */}
+                    <Typography.Title level={3}>
+                        J&A Car Rental
+                    </Typography.Title>
                 </div>
-
                 <Typography.Title level={4}>Account Login</Typography.Title>
 
                 <Form
