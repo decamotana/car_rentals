@@ -1,15 +1,15 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import PageUsersHome from "./PageUsersHome";
+import PageHomeUser from "./PageUsersHome";
 
 export default function PageUser(props) {
     const {} = props;
     const location = useLocation();
-    const name = location.state.username || {};
+    const username = location.state?.username || "User";
     // console.log("Username >", name);
     return (
         <>
-            <PageUsersHome name={name} />
+            <PageHomeUser name={username} />
         </>
     );
 }

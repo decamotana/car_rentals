@@ -21,8 +21,8 @@ export function POST(url, key_name, onSuccessFunction, isLoading = true) {
                 .then((res) => res.data);
         },
         {
-            onSuccess: () => {
-                if (onSuccessFunction) onSuccessFunction();
+            onSuccess: (resData) => {
+                if (onSuccessFunction) onSuccessFunction(resData);
                 if (key_name) {
                     if (typeof key_name === "string") {
                         queryClient.refetchQueries(key_name);

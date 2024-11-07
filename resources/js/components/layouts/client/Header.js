@@ -51,22 +51,22 @@ export default function Header(props) {
                 navigate("/contact-us");
             },
         },
-        // // Sign Up
-        // {
-        //     key: "sign-up",
-        //     label: "Sign Up",
-        //     onClick: () => {
-        //         navigate("/sign-up");
-        //     },
-        // },
-        // // Sign In
-        // {
-        //     key: "sign-in",
-        //     label: "Sign In",
-        //     onClick: () => {
-        //         navigate("/sign-in");
-        //     },
-        // },
+        // Sign Up
+        {
+            key: "sign-up",
+            label: "Sign Up",
+            onClick: () => {
+                navigate("/sign-up");
+            },
+        },
+        // Sign In
+        {
+            key: "sign-in",
+            label: "Sign In",
+            onClick: () => {
+                navigate("/sign-in");
+            },
+        },
     ];
 
     return (

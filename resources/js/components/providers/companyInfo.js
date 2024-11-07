@@ -42,6 +42,7 @@ export const token = () => {
         clearLocalStorage();
         return false;
     }
+    console.log("token >", localStorage.getItem("token"));
     return "Bearer " + localStorage.getItem("token");
 };
 
@@ -54,5 +55,6 @@ export const userData = () => {
 };
 
 export const role = () => {
+    console.log("role >", userData().role);
     return userData().role;
 };

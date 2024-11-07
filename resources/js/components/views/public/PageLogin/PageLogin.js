@@ -27,14 +27,19 @@ export default function PageLogin() {
 
         mutateLogin(values, {
             onSuccess: (res) => {
-                // console.log("res", res);
+                console.log("response >", res);
                 if (res.data) {
                     localStorage.userdata = encrypt(JSON.stringify(res.data));
                     localStorage.token = res.token;
 
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                    const { username } = res.data.username;
+
+                    // console.log("username >", username);
+                    navigate("/userHome", { state: { username } });
+
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 500);
                 } else {
                     setErrorMessageLogin({
                         type: "error",

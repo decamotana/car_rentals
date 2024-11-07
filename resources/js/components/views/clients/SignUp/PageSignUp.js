@@ -97,15 +97,40 @@ export default function PageSignUp() {
         mutation.mutate(values);
     };
 
-    const mutation = POST("api/register", "register", (resData) => {
-        // console.log("Registration Success...", resData);
+    const mutation = POST("api/register", "register", async (resData) => {
+        console.log("RestData >", resData);
 
-        form.resetFields();
+        if (!resData || !resData.user.email) {
+            console.error("Registration is missing email");
+            return;
+        }
 
-        const { username } = resData.user;
+        // Step 1: Registration was successful, now initiate the login request
+        try {
+            // console.log("resdata.emali >", resData.email);
+            // Assuming your login API accepts email and password
+            const loginResponse = await axios.post("/api/login", {
+                email: resData.user.email, // Use the email from the registration response or form
+                password: form.getFieldValue("password"), // Get the password from the form data
+            });
 
-        // console.log("username >", username);
-        navigate("/userHome", { state: { username } });
+            // Step 2: Store the token from the login response (adjust as needed for your auth)
+            const token = loginResponse.data.token;
+            localStorage.setItem("authToken", token);
+
+            // console.log("token >", localStorage.setItem("authToken", token));
+
+            // Step 3: Reset the form and redirect to the desired page
+            form.resetFields();
+
+            const { username } = resData.user;
+
+            // console.log("username >", username);
+            navigate("/userHome", { state: { username } });
+        } catch (error) {
+            console.error("Automatic sign-in failed:", error);
+            // Optionally handle the error (show a message, etc.)
+        }
     });
 
     const prefixSelector = (

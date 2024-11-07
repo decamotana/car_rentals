@@ -26,7 +26,7 @@ export default function PageHomeUsers({ name = "User" }) {
                     <Typography.Title>
                         Welcome to J&A Car Rental
                     </Typography.Title>
-                    <h1>{name || "User"}!</h1>
+                    <h1>{name}!</h1>
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                     <Carousel autoplay>

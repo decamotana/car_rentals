@@ -4,9 +4,11 @@ import Fortuner from "../../../../../../../resources/images/Fortuner.jpg";
 import Mux from "../../../../../../../resources/images/mux.jpg";
 import Raptor from "../../../../../../../resources/images/raptor.jpg";
 import NissanProx from "../../../../../../../resources/images/NissanProx.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function PageHomeCars(props) {
     const {} = props;
+    const Navigate = useNavigate();
 
     const contentStyle = {
         height: "230px",
@@ -22,9 +24,10 @@ export default function PageHomeCars(props) {
     };
 
     const reservedClick = () => {
+        Navigate("/sign-up");
         // alert("Welcome to sign-in");
         // console.log('Register');
-        history(`$`);
+        // history(`$`);
     };
 
     return (
