@@ -1,91 +1,43 @@
+import { faPencil, faTrash } from "@fortawesome/pro-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    Row,
-    Col,
-    Table,
     Button,
+    Col,
     notification,
     Popconfirm,
+    Row,
+    Table,
     Tooltip,
 } from "antd";
-import { POST, GET, DELETE } from "../../../../providers/useAxiosQuery";
+import React from "react";
 import {
-    TableGlobalSearch,
-    TablePageSize,
     TablePagination,
     TableShowingEntries,
 } from "../../../../providers/CustomTableFilter";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faPencil,
-    faTrash,
-    faUserGear,
-} from "@fortawesome/pro-regular-svg-icons";
-import notificationErrors from "../../../../providers/notificationErrors";
-import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 
-export default function TableUser(props) {
-    const { dataSource, tableFilter, setTableFilter, sortInfo } = props;
-
-    const navigate = useNavigate();
-
-    const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
-        DELETE(`api/users`, "user_list");
-
-    const handleDeactivate = (record) => {
-        console.log("record >", record);
-        mutateDeactivateUser(record, {
-            onSuccess: (res) => {
-                if (res.success) {
-                    notification.success({
-                        message: "User",
-                        description: res.message,
-                    });
-                } else {
-                    notification.error({
-                        message: "User",
-                        description: res.message,
-                    });
-                }
-            },
-            onError: (err) => {
-                notificationErrors(err);
-            },
-        });
-    };
-
-    const onChangeTable = (pagination, filters, sorter) => {
-        setTableFilter((ps) => ({
-            ...ps,
-            sort_field: sorter.columnKey,
-            sort_order: sorter.order ? sorter.order.replace("end", "") : null,
-            page: 1,
-            page_size: "50",
-        }));
-    };
-
+export default function CarTable() {
     return (
         <Row gutter={[12, 12]} id="tbl_wrapper">
             <Col xs={24} sm={24} md={24}>
                 <div className="tbl-top-filter">
-                    <TablePageSize
+                    {/* <TablePageSize
                         tableFilter={tableFilter}
                         setTableFilter={setTableFilter}
                     />
                     <TableGlobalSearch
                         tableFilter={tableFilter}
                         setTableFilter={setTableFilter}
-                    />
+                    /> */}
                 </div>
             </Col>
             <Col xs={24} sm={24} md={24}>
                 <Table
                     className="ant-table-default ant-table-striped"
-                    dataSource={dataSource && dataSource.data.data}
-                    rowKey={(record) => record.id}
+                    // dataSource={dataSource && dataSource.data.data}
+                    // rowKey={(record) => record.id}
                     pagination={false}
                     bordered={false}
-                    onChange={onChangeTable}
+                    // onChange={onChangeTable}
                     scroll={{ x: "max-content" }}
                 >
                     <Table.Column
@@ -100,11 +52,11 @@ export default function TableUser(props) {
                                         <Button
                                             type="link"
                                             className="btn-info"
-                                            onClick={() => {
-                                                navigate(
-                                                    `${location.pathname}/permission/${record.id}`
-                                                );
-                                            }}
+                                            // onClick={() => {
+                                            //     navigate(
+                                            //         `${location.pathname}/permission/${record.id}`
+                                            //     );
+                                            // }}
                                             name="btn_edit_permission"
                                         >
                                             <FontAwesomeIcon
@@ -117,11 +69,11 @@ export default function TableUser(props) {
                                         <Button
                                             type="link"
                                             className="text-primary"
-                                            onClick={() => {
-                                                navigate(
-                                                    `${location.pathname}/edit/${record.id}`
-                                                );
-                                            }}
+                                            // onClick={() => {
+                                            //     navigate(
+                                            //         `${location.pathname}/edit/${record.id}`
+                                            //     );
+                                            // }}
                                             name="btn_edit"
                                         >
                                             <FontAwesomeIcon icon={faPencil} />
@@ -130,9 +82,9 @@ export default function TableUser(props) {
 
                                     <Popconfirm
                                         title="Are you sure to deactivate this data?"
-                                        onConfirm={() => {
-                                            handleDeactivate(record);
-                                        }}
+                                        // onConfirm={() => {
+                                        //     handleDeactivate(record);
+                                        // }}
                                         onCancel={() => {
                                             notification.error({
                                                 message: "User",
@@ -147,7 +99,7 @@ export default function TableUser(props) {
                                             <Button
                                                 type="link"
                                                 className="text-danger"
-                                                loading={loadingDeactivateUser}
+                                                // loading={loadingDeactivateUser}
                                                 name="btn_delete"
                                             >
                                                 <FontAwesomeIcon
@@ -195,19 +147,19 @@ export default function TableUser(props) {
                     />
                 </Table>
             </Col>
-            <Col xs={24} sm={24} md={24}>
+            {/* <Col xs={24} sm={24} md={24}>
                 <div className="tbl-bottom-filter">
                     <TableShowingEntries />
                     <TablePagination
-                        tableFilter={tableFilter}
-                        setTableFilter={setTableFilter}
-                        setPaginationTotal={dataSource?.data.total}
-                        showLessItems={true}
-                        showSizeChanger={false}
-                        tblIdWrapper="tbl_wrapper"
+                    // tableFilter={tableFilter}
+                    // setTableFilter={setTableFilter}
+                    // setPaginationTotal={dataSource?.data.total}
+                    // showLessItems={true}
+                    // showSizeChanger={false}
+                    // tblIdWrapper="tbl_wrapper"
                     />
                 </div>
-            </Col>
+            </Col> */}
         </Row>
     );
 }

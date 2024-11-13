@@ -52,7 +52,7 @@ export default function PageUser() {
 
     const { data: dataSource, refetch: refetchSource } = GET(
         `api/users?${new URLSearchParams(tableFilter)}`,
-        ["users_active_list", "check_user_permission"]
+        "user_list"
     );
 
     useEffect(() => {
@@ -65,7 +65,7 @@ export default function PageUser() {
     return (
         <>
             <Row gutter={[12, 12]}>
-                {location.pathname === "/users/current" ? (
+                {location.pathname === "/users" ? (
                     <Col xs={24} sm={24} md={24}>
                         <Button
                             className=" btn-main-primary btn-main-invert-outline b-r-none"
