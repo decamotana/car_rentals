@@ -57,9 +57,42 @@ class ProfileController extends Controller
      * @param  \App\Models\Profile  $profile
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Profile $profile)
+    public function destroy(Profile $id)
     {
-        //
+        $ret = [
+            "success" => false,
+            "message" => "Signature not save"
+        ];
+        $id = Profile::find($id);
+
+        if ($id) {
+            if ($id->delete()) {
+                $ret = [
+                    "success" => true,
+                    "message" => "User Deleted"
+                ];
+            }
+        }
+        return response()->json($ret, 200);
+    }
+
+    public function delete_list($id)
+    {
+        $ret = [
+            "success" => false,
+            "message" => "Signature not save"
+        ];
+        $id = Profile::find($id);
+
+        if ($id) {
+            if ($id->delete()) {
+                $ret = [
+                    "success" => true,
+                    "message" => "User Deleted"
+                ];
+            }
+        }
+        return response()->json($ret, 200);
     }
 
     public function upload_signature(Request $request)

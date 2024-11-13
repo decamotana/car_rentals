@@ -7,6 +7,7 @@ import {
     faFilePdf,
     faMicrochip,
 } from "@fortawesome/pro-regular-svg-icons";
+import { faCar } from "@fortawesome/pro-solid-svg-icons";
 
 export const adminHeaderMenuLeft = (
     <>
@@ -51,11 +52,11 @@ export const adminSideMenu = [
         path: "/users",
         icon: <FontAwesomeIcon icon={faUsers} />,
     },
-    // {
-    //     title: "Permissions",
-    //     path: "/permission",
-    //     icon: <FontAwesomeIcon icon={faShieldKeyhole} />,
-    // },
+    {
+        title: "Cars",
+        path: "/cars",
+        icon: <FontAwesomeIcon icon={faCar} />,
+    },
     // {
     //     title: "Components",
     //     path: "/components",

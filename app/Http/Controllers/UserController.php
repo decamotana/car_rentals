@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Laravel\Ui\Presets\React;
 
 class UserController extends Controller
 {
@@ -158,9 +159,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-    }
+    public function update(Request $request, $id) {}
 
     /**
      * Remove the specified resource from storage.
@@ -170,7 +169,23 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $ret  = [
+            "success" => false,
+            "message" => "Data not delete"
+        ];
+
+        $findPayroll = User::find($id);
+
+        if ($findPayroll) {
+            if ($findPayroll->delete()) {
+                $ret  = [
+                    "success" => true,
+                    "message" => "Data deleted successfully"
+                ];
+            }
+        }
+
+        return response()->json($ret, 200);
     }
 
     public function users_update_email(Request $request)
@@ -321,6 +336,26 @@ class UserController extends Controller
             ];
         }
 
+        return response()->json($ret, 200);
+    }
+
+    public function delete_list(Request $request)
+    {
+        $ret = [
+            "success" => false,
+            "message" => "Signature not save"
+        ];
+
+        $find_id = User::find($request->id);
+
+        if ($find_id) {
+            if ($find_id->delete()) {
+                $ret = [
+                    "success" => true,
+                    "message" => "User Deleted"
+                ];
+            }
+        }
         return response()->json($ret, 200);
     }
 }

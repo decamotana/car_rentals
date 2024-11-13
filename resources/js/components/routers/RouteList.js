@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import {
     faBooks,
+    faCar,
     faCog,
     faFilePdf,
     faHome,
@@ -33,6 +34,8 @@ import PageContactUs from "../views/clients/PageContactUs/PageContactUs";
 import PageRegister from "../views/public/PageRegister/PageRegister";
 import PageSignUp from "../views/clients/SignUp/PageSignUp";
 import PageUsersComponents from "../views/clients/PageUsers/PageUsersComponents";
+import CarsList from "../views/private/PageCars/CarsList";
+import AddCar from "../views/private/PageCars/Components/AddCar";
 
 export default function RouteList() {
     return (
@@ -380,6 +383,50 @@ export default function RouteList() {
                             },
                         ]}
                         component={PageComponents}
+                    />
+                }
+            />
+
+            <Route
+                path="/cars"
+                element={
+                    <PrivateRoute
+                        // moduleCode="M-04"
+                        moduleName="CARS"
+                        title="Car List"
+                        subtitle="CAR LIST"
+                        pageId="PageComponents"
+                        pageHeaderIcon={faCog}
+                        breadcrumb={[
+                            {
+                                name: "Cars",
+                            },
+                        ]}
+                        component={CarsList}
+                    />
+                }
+            />
+
+            <Route
+                path="/cars/add"
+                element={
+                    <PrivateRoute
+                        // moduleCode="M-02"
+                        moduleName="Car Current Add"
+                        title="Cars"
+                        subtitle="ADD"
+                        pageId="CarsAdd"
+                        pageHeaderIcon={faCar}
+                        breadcrumb={[
+                            {
+                                name: "Cars",
+                                link: "/cars",
+                            },
+                            {
+                                name: "Add Car",
+                            },
+                        ]}
+                        component={AddCar}
                     />
                 }
             />
