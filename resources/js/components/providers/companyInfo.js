@@ -9,6 +9,7 @@ export const apiUrl = (url) => `${window.location.origin}/${url}`;
 
 export const defaultProfile = apiUrl("images/default.png");
 export const defaultDocument = apiUrl("images/documents.png");
+export const defaultCar = apiUrl("images/logo_upload.png");
 
 export const date = new Date();
 

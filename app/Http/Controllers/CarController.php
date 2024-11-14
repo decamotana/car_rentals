@@ -12,9 +12,86 @@ class CarController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $data = new Car;
+        $data = $data->select([
+            "cars.*",
+        ]);
+
+        if (isset($request->search)) {
+            $data = $data->where(function ($q) use ($request) {
+                $q->orWhere("name", 'LIKE', "%$request->search%");
+                $q->orWhere("type", 'LIKE', "%$request->search%");
+                $q->orWhere("brand_name", 'LIKE', "%$request->search%");
+            });
+        }
+
+        if (isset($request->status)) {
+            $data = $data->where('status', $request->status);
+        }
+
+        if ($request->sort_field && $request->sort_order) {
+            if (
+                $request->sort_field != '' && $request->sort_field != 'undefined' && $request->sort_field != 'null'  &&
+                $request->sort_order != ''  && $request->sort_order != 'undefined' && $request->sort_order != 'null'
+            ) {
+
+                $data->orderBy(isset($request->sort_field) ? $request->sort_field : 'id', isset($request->sort_order)  ? $request->sort_order : 'desc');
+            }
+        } else {
+            $data->orderBy('id', 'desc');
+        }
+
+        if ($request->page_size) {
+            $data = $data
+                ->limit($request->page_size)
+                ->paginate($request->page_size, ['*'], 'page', $request->page_number)->toArray();
+        } else {
+            $data = $data->get();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ], 200);
+        // $data = Car::query()->select("cars.*");
+
+        // // Search functionality
+        // if (!empty($request->search)) {
+        //     $search = $request->search;
+        //     $data->where(function ($query) use ($search) {
+        //         $query->orWhere("name", "LIKE", "%$search%")
+        //             ->orWhere("type", "LIKE", "%$search%")
+        //             ->orWhere("brand_name", "LIKE", "%$search%");
+        //     });
+        // }
+
+        // // Filter by status
+        // if (!empty($request->status)) {
+        //     $data->where("status", $request->status);
+        // }
+
+        // // Sorting functionality
+        // $sortField = $request->sort_field ?? 'id';
+        // $sortOrder = $request->sort_order ?? 'desc';
+
+        // if (!in_array($sortOrder, ['asc', 'desc'])) {
+        //     $sortOrder = 'desc';
+        // }
+
+        // $data->orderBy($sortField, $sortOrder);
+
+        // // Pagination
+        // $pageSize = $request->page_size ?? 10; // default page size if not provided
+        // $pageNumber = $request->page_number ?? 1; // default page number if not provided
+
+        // $data = $data->paginate($pageSize, ['*'], 'page', $pageNumber);
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data' => $data->toArray(),
+        // ], 200);
     }
 
     /**
@@ -60,5 +137,45 @@ class CarController extends Controller
     public function destroy(Car $car)
     {
         //
+    }
+
+    public function add_car_list(Request $request)
+    {
+        $ret = [
+            "success" => false,
+            "message" => "Add Form " . ($request->id ? "update" : "saved"),
+            "data" => $request->all()
+        ];
+
+        $data =  [
+            "created_by" => $request->created_by,
+            "updated_by" => $request->updated_by,
+            "name" => $request->name,
+            "description" => $request->description,
+            "type" => $request->type,
+            "brand_name" => $request->brand_name,
+            "year_model" => $request->year_model,
+            "passengers" => $request->passengers,
+            "rates" => $request->rates,
+        ];
+
+        $query = Car::updateOrCreate(
+            ["id" => $request->id ?? null],
+            $data
+        );
+        if ($query) {
+            $ret = [
+                "success" => true,
+                "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
+
+            ];
+        } else {
+            $ret = [
+                "success" => false,
+                "message" => "Data not " . ($request->id ? "updated" : "saved"),
+                "data" => $request->all()
+            ];
+        }
+        return response()->json($ret, 200);
     }
 }

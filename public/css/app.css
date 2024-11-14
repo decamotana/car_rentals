@@ -15939,3 +15939,8 @@ textarea.form-control-lg {
 .layout-client .ant-layout-footer .ant-typography {
   color: #ffffff !important;
 }
+.layout-client .clickable-card:hover {
+  box-shadow: 1px 1px 8px 3px #ccc;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}

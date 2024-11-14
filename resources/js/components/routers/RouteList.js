@@ -432,6 +432,30 @@ export default function RouteList() {
             />
 
             <Route
+                path="/cars/edit/:id"
+                element={
+                    <PrivateRoute
+                        // moduleCode="M-02"
+                        moduleName="Car Current Edit"
+                        title="Cars"
+                        subtitle="EDIT"
+                        pageId="CarsEdit"
+                        pageHeaderIcon={faCar}
+                        breadcrumb={[
+                            {
+                                name: "Cars",
+                                link: "/cars",
+                            },
+                            {
+                                name: "Edit Car Info",
+                            },
+                        ]}
+                        component={AddCar}
+                    />
+                }
+            />
+
+            <Route
                 path="/request-permission"
                 element={<PageRequestPermission />}
             />

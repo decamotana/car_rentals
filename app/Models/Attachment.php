@@ -16,4 +16,9 @@ class Attachment extends Model
     {
         return $this->morphTo();
     }
+
+    public function profile() //added
+    {
+        return $this->belongsTo(Profile::class);
+    }
 }
