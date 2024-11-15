@@ -5,7 +5,15 @@ import {
     faCamera,
 } from "@fortawesome/pro-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Collapse, Form, notification, Row } from "antd";
+import {
+    Button,
+    Col,
+    Collapse,
+    Form,
+    notification,
+    Popconfirm,
+    Row,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import FloatSelect from "../../../../providers/FloatSelect";
 import FloatInput from "../../../../providers/FloatInput";
@@ -21,8 +29,10 @@ import {
 import ModalUserUploadPictureForm from "../../PageUser/components/ModalUserUploadPictureForm";
 import FloatDatePicker from "../../../../providers/FloatDatePicker";
 import FloatTextArea from "../../../../providers/FloatTextArea";
-import { POST } from "../../../../providers/useAxiosQuery";
+import { GET, POST } from "../../../../providers/useAxiosQuery";
 import notificationErrors from "../../../../providers/notificationErrors";
+import moment from "moment";
+import dayjs from "dayjs";
 
 export default function AddCar() {
     const navigate = useNavigate();
@@ -31,7 +41,56 @@ export default function AddCar() {
     const params = useParams();
     const [userId, setUserId] = useState(null);
 
-    const { mutate: mutateCarAdd } = POST(`api/add_car_list`, "cars_info");
+    const { mutate: mutateCarAdd } = POST(`api/add_car_list`, "car_list");
+    GET(`api/cars/${params.id}`, "car_list", (res) => {
+        if (res.data) {
+            console.log("sss", res.data);
+            let data = res.data;
+
+            let name = data.name;
+            let description = data.description;
+            let type = data.type;
+            let brand_name = data.brand_name;
+            let year_model = moment(data.year_model, "YYYY");
+            let passengers = data.passengers;
+            let rates = data.rates;
+
+            // let gender = data.profile.gender;
+
+            // if (
+            //     data.profile &&
+            //     data.profile.attachments &&
+            //     data.profile.attachments.length > 0
+            // ) {
+            //     let profileAttachments = data.profile.attachments.filter(
+            //         (f) => f.file_description === "Profile Picture"
+            //     );
+
+            //     if (profileAttachments.length > 0) {
+            //         setToggleModalUploadProfilePicture({
+            //             open: false,
+            //             file: null,
+            //             src: apiUrl(profileAttachments[0].file_path),
+            //             is_camera: null,
+            //             fileName: null,
+            //         });
+            //     }
+
+            //     //  = data.profile.attachments[0].gender;
+            // }
+
+            form.setFieldsValue({
+                // role: data.role,
+                name,
+                description,
+                year_model,
+                type,
+                brand_name,
+                passengers,
+                rates,
+            });
+        }
+    });
 
     const [
         toggleModalUserUploadPictureForm,
@@ -71,25 +130,25 @@ export default function AddCar() {
         }
 
         let data = new FormData();
+        data.append("id", params.id ? params.id : "");
         data.append("created_by", userId);
         data.append("updated_by", userId);
-        data.append("name", values.make);
+        data.append("name", values.name);
         data.append("description", values.description);
-        data.append("type", values.variant);
-        data.append("brand_name", values.model);
-        data.append("year_model", values.year);
-        data.append("rates", values.rates);
-        // data.append("username", values.username);
-        // data.append("email", values.email);
-        // if (!params.id) {
-        //     data.append("password", values.password);
-        // }
-        // data.append("firstname", values.firstname);
-        // data.append("lastname", values.lastname);
+        data.append("type", values.type);
+        data.append("brand_name", values.brand_name);
+        data.append("passengers", values.passengers);
 
-        // data.append("gender", values.gender);
+        data.append("rates", values.rates);
+        data.append(
+            "year_model",
+            values.year_model
+                ? dayjs(values.year_model).format("YYYY-MM-DD")
+                : ""
+        );
 
         if (fileList.file) {
+            console.log("file >", fileList.file);
             data.append("imagefile", fileList.file);
         }
 
@@ -101,6 +160,7 @@ export default function AddCar() {
                             message: "Car",
                             description: res.message,
                         });
+                        navigate("/cars");
                     } else {
                         notification.success({
                             message: "Car",
@@ -138,7 +198,7 @@ export default function AddCar() {
                 <Button
                     className=" btn-main-primary btn-main-invert-outline b-r-none"
                     icon={<FontAwesomeIcon icon={faArrowLeft} />}
-                    // onClick={() => navigate(-1)}
+                    onClick={() => navigate(-1)}
                 >
                     Back to list
                 </Button>
@@ -174,7 +234,7 @@ export default function AddCar() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
-                                                        name="make"
+                                                        name="name"
                                                         rules={[
                                                             validateRules.required(),
                                                         ]}
@@ -183,12 +243,14 @@ export default function AddCar() {
                                                             label="Make"
                                                             placeholder="Make"
                                                             required={true}
-                                                            // options={
-                                                            //     optionUserType
-                                                            // }
                                                             disabled={
                                                                 formDisabled
                                                             }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
                                                         />
                                                     </Form.Item>
                                                 </Col>
@@ -202,7 +264,7 @@ export default function AddCar() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
-                                                        name="model"
+                                                        name="brand_name"
                                                         rules={[
                                                             validateRules.required(),
                                                         ]}
@@ -210,12 +272,15 @@ export default function AddCar() {
                                                         <FloatInput
                                                             label="Model"
                                                             placeholder="Model"
-                                                            required
+                                                            required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
                                                         />
                                                     </Form.Item>
                                                 </Col>
@@ -229,20 +294,23 @@ export default function AddCar() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
-                                                        name="variant"
+                                                        name="type"
                                                         rules={[
                                                             validateRules.required(),
                                                         ]}
                                                     >
                                                         <FloatInput
-                                                            label="Variant"
-                                                            placeholder="Variant"
+                                                            label="Type"
+                                                            placeholder="Type"
                                                             required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
                                                         />
                                                     </Form.Item>
                                                 </Col>
@@ -256,7 +324,7 @@ export default function AddCar() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
-                                                        name="year"
+                                                        name="year_model"
                                                         rules={[
                                                             validateRules.required(),
                                                         ]}
@@ -266,9 +334,7 @@ export default function AddCar() {
                                                             placeholder="Year"
                                                             required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
                                                         />
                                                     </Form.Item>
@@ -293,10 +359,13 @@ export default function AddCar() {
                                                             placeholder="Passengers"
                                                             required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
                                                         />
                                                     </Form.Item>
                                                 </Col>
@@ -320,10 +389,13 @@ export default function AddCar() {
                                                             placeholder="Rates"
                                                             required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
                                                         />
                                                     </Form.Item>
                                                 </Col>
@@ -347,9 +419,7 @@ export default function AddCar() {
                                                             placeholder="Description"
                                                             required={true}
                                                             disabled={
-                                                                params.id
-                                                                    ? true
-                                                                    : formDisabled
+                                                                formDisabled
                                                             }
                                                         />
                                                     </Form.Item>
@@ -439,7 +509,7 @@ export default function AddCar() {
                             />
                         </Col>
 
-                        <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
+                        {/* <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
                             <Button
                                 key={4}
                                 className="btn-main-primary"
@@ -449,7 +519,47 @@ export default function AddCar() {
                             >
                                 SUBMIT
                             </Button>
-                        </Col>
+                        </Col> */}
+
+                        {params.id ? (
+                            <Col
+                                xs={24}
+                                sm={24}
+                                md={24}
+                                lg={24}
+                                xl={24}
+                                xxl={24}
+                            >
+                                {" "}
+                                <Button
+                                    className="btn-main-primary"
+                                    type="primary"
+                                    size="large"
+                                    onClick={() => form.submit()}
+                                >
+                                    Update
+                                </Button>
+                            </Col>
+                        ) : (
+                            <Col
+                                xs={24}
+                                sm={24}
+                                md={24}
+                                lg={24}
+                                xl={24}
+                                xxl={24}
+                            >
+                                <Button
+                                    key={4}
+                                    className="btn-main-primary"
+                                    type="primary"
+                                    size="large"
+                                    onClick={() => form.submit()}
+                                >
+                                    SUBMIT
+                                </Button>
+                            </Col>
+                        )}
                     </Row>
                 </Form>
                 <ModalUserUploadPictureForm

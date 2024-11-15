@@ -111,9 +111,20 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function show(Car $car)
+    public function show($id)
     {
-        //
+        $data = Car::find($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Car not found'], 404);
+        }
+
+        $ret = [
+            "success" => true,
+            "data" => $data
+        ];
+
+        return response()->json($ret, 200);
     }
 
     /**
@@ -134,9 +145,25 @@ class CarController extends Controller
      * @param  \App\Models\Car  $car
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Car $car)
+    public function destroy($id)
     {
-        //
+        $ret  = [
+            "success" => false,
+            "message" => "Data not delete"
+        ];
+
+        $findPayroll = Car::find($id);
+
+        if ($findPayroll) {
+            if ($findPayroll->delete()) {
+                $ret  = [
+                    "success" => true,
+                    "message" => "Data deleted successfully"
+                ];
+            }
+        }
+
+        return response()->json($ret, 200);
     }
 
     public function add_car_list(Request $request)
@@ -167,14 +194,49 @@ class CarController extends Controller
             $ret = [
                 "success" => true,
                 "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
-
             ];
+
+            if ($query) {
+                if ($request->hasFile("profile_picture")) {
+                    $file = $request->file("profile_picture");
+
+                    $this->create_attachment($query, $file, [
+                        'folder_name' => "profiles/profile-$query->id/profile_picture",
+                        'file_description' => "Profile Picture",
+                    ]);
+
+                    $ret = [
+                        "success" => true,
+                        "message" => "Profile photo updated successfully",
+                    ];
+                }
+            }
         } else {
             $ret = [
                 "success" => false,
                 "message" => "Data not " . ($request->id ? "updated" : "saved"),
                 "data" => $request->all()
             ];
+        }
+        return response()->json($ret, 200);
+    }
+
+    public function delete_car_list(Request $request)
+    {
+        $ret = [
+            "success" => false,
+            "message" => "Signature not save"
+        ];
+
+        $find_id = Car::find($request->id);
+
+        if ($find_id) {
+            if ($find_id->delete()) {
+                $ret = [
+                    "success" => true,
+                    "message" => "Car Deleted"
+                ];
+            }
         }
         return response()->json($ret, 200);
     }

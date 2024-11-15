@@ -50,14 +50,12 @@ export default function PageUser() {
         return () => {};
     }, [location]);
 
-    const { data: dataSource, refetch: refetchSource } = GET(
+    const { data: dataSource } = GET(
         `api/users?${new URLSearchParams(tableFilter)}`,
         "user_list"
     );
 
     useEffect(() => {
-        refetchSource();
-
         return () => {};
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableFilter]);

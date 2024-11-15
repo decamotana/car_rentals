@@ -48,14 +48,12 @@ export default function CarsList() {
         return () => {};
     }, [location]);
 
-    const { data: dataSource, refetch: refetchSource } = GET(
+    const { data: dataSource } = GET(
         `api/cars?${new URLSearchParams(tableFilter)}`,
-        "car_list"
+        "add_car_list"
     );
 
     useEffect(() => {
-        refetchSource();
-
         return () => {};
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tableFilter]);

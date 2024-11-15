@@ -21,38 +21,40 @@ import {
     TableShowingEntries,
 } from "../../../../providers/CustomTableFilter";
 import { userData } from "../../../../providers/companyInfo";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import notificationErrors from "../../../../providers/notificationErrors";
+import { DELETE, POST } from "../../../../providers/useAxiosQuery";
 
 export default function CarTable(props) {
     const { dataSource, tableFilter, setTableFilter, sortInfo } = props;
-    console.log("asd", dataSource);
+    // console.log("asd", dataSource);
     const navigate = useNavigate();
+    const params = useParams();
 
-    // const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
-    //     DELETE(`api/cars`, "car_list");
+    const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
+        POST(`api/delete_car_list`, "add_car_list");
 
-    // const handleDeactivate = (record) => {
-    //     console.log("record >", record);
-    //     mutateDeactivateUser(record, {
-    //         onSuccess: (res) => {
-    //             if (res.success) {
-    //                 notification.success({
-    //                     message: "User",
-    //                     description: res.message,
-    //                 });
-    //             } else {
-    //                 notification.error({
-    //                     message: "User",
-    //                     description: res.message,
-    //                 });
-    //             }
-    //         },
-    //         onError: (err) => {
-    //             notificationErrors(err);
-    //         },
-    //     });
-    // };
+    const handleDeactivate = (record) => {
+        console.log("record >", record);
+        mutateDeactivateUser(record, {
+            onSuccess: (res) => {
+                if (res.success) {
+                    notification.success({
+                        message: "Car",
+                        description: res.message,
+                    });
+                } else {
+                    notification.error({
+                        message: "Car",
+                        description: res.message,
+                    });
+                }
+            },
+            onError: (err) => {
+                notificationErrors(err);
+            },
+        });
+    };
 
     const onChangeTable = (pagination, filters, sorter) => {
         setTableFilter((ps) => ({
@@ -96,32 +98,15 @@ export default function CarTable(props) {
                         render={(text, record) => {
                             return (
                                 <>
-                                    <Tooltip title="Edit Permission">
-                                        <Button
-                                            type="link"
-                                            className="btn-info"
-                                            // onClick={() => {
-                                            //     navigate(
-                                            //         `${location.pathname}/permission/${record.id}`
-                                            //     );
-                                            // }}
-                                            name="btn_edit_permission"
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faUserGear}
-                                            />
-                                        </Button>
-                                    </Tooltip>
-
                                     <Tooltip title="Edit Profile">
                                         <Button
                                             type="link"
                                             className="text-primary"
-                                            // onClick={() => {
-                                            //     navigate(
-                                            //         `${location.pathname}/edit/${record.id}`
-                                            //     );
-                                            // }}
+                                            onClick={() => {
+                                                navigate(
+                                                    `${location.pathname}/edit/${record.id}`
+                                                );
+                                            }}
                                             name="btn_edit"
                                         >
                                             <FontAwesomeIcon icon={faPencil} />
@@ -130,12 +115,12 @@ export default function CarTable(props) {
 
                                     <Popconfirm
                                         title="Are you sure to deactivate this data?"
-                                        // onConfirm={() => {
-                                        //     handleDeactivate(record);
-                                        // }}
+                                        onConfirm={() => {
+                                            handleDeactivate(record);
+                                        }}
                                         onCancel={() => {
                                             notification.error({
-                                                message: "User",
+                                                message: "Car",
                                                 description:
                                                     "Data not deactivated",
                                             });
@@ -143,11 +128,11 @@ export default function CarTable(props) {
                                         okText="Yes"
                                         cancelText="No"
                                     >
-                                        <Tooltip title="Delete User">
+                                        <Tooltip title="Delete Car">
                                             <Button
                                                 type="link"
                                                 className="text-danger"
-                                                // loading={loadingDeactivateUser}
+                                                loading={loadingDeactivateUser}
                                                 name="btn_delete"
                                             >
                                                 <FontAwesomeIcon
@@ -171,20 +156,26 @@ export default function CarTable(props) {
                     />
                     <Table.Column
                         title="Model"
-                        key="type"
-                        dataIndex="type"
+                        key="brand_name"
+                        dataIndex="brand_name"
                         // sorter={true}
                     />
                     <Table.Column
-                        title="Variant"
-                        key="variant"
-                        dataIndex="variant"
+                        title="Type"
+                        key="type"
+                        dataIndex="type"
                         // sorter
                     />
                     <Table.Column
                         title="Year"
                         key="year_model"
                         dataIndex="year_model"
+                        // sorter
+                    />
+                    <Table.Column
+                        title="Passengers"
+                        key="passengers"
+                        dataIndex="passengers"
                         // sorter
                     />
                 </Table>

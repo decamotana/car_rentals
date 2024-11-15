@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('delete_list', [App\Http\Controllers\UserController::class, 'delete_list']);
     Route::post('add_car_list', [\App\Http\Controllers\CarController::class, 'add_car_list']);
+    Route::post('delete_car_list', [\App\Http\Controllers\CarController::class, 'delete_car_list']);
     // END UserController
 
 });

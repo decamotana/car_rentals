@@ -89,6 +89,7 @@ export default function PageUserForm() {
         ["users_info", "check_user_permission"],
         (res) => {
             if (res.data) {
+                // console.log("resdata", res.data);
                 let data = res.data;
 
                 let username = data.username;

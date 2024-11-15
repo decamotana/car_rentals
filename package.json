@@ -48,6 +48,7 @@
         "antd-img-crop": "^4.21.0",
         "antd-password-input-strength": "^2.0.1",
         "crypto-js": "^4.2.0",
+        "dayjs": "^1.11.13",
         "downloadjs": "^1.4.7",
         "highcharts": "^11.4.0",
         "immutability-helper": "^3.1.1",
