@@ -34,29 +34,31 @@ class Controller extends BaseController
         return $bytes;
     }
 
-    public function create_attachment($model, $file, $option)
+    public function create_attachment($model, $file, $option = [])
     {
         if (!empty($option['folder_name'])) {
             $action = !empty($option['action']) ? $option['action'] : "";
-            $id = !empty($option['id']) ? $option['id'] : "";
+            // $id = !empty($option['id']) ? $option['id'] : "";
             $folder_name = !empty($option['folder_name']) ? $option['folder_name'] : null;
             $file_description = !empty($option['file_description']) ? $option['file_description'] : null;
-            $file_type = !empty($option['file_type']) ? $option['file_type'] : null;
+            $file_type = !empty($option['file_type']) ? $option['file_type'] : 'image';
+            // $created_by = !empty($option['created_by']) ? $option['created_by'] : null;
 
-            if ($action == 'Add') {
-                $fileName = $file->getClientOriginalName();
-                $filePath = Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $filePath = $file->storeAs($folder_name, $filePath, 'public');
-                $fileSize = $this->formatSizeUnits($file->getSize());
+            //if ($action == 'Add') {
+            $fileName = $file->getClientOriginalName();
+            $filePath = Str::random(10) . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs($folder_name, $filePath, 'public');
+            $fileSize = $this->formatSizeUnits($file->getSize());
 
-                $model->attachments()->create([
-                    'file_name' => $fileName,
-                    'file_path' => "storage/" . $filePath,
-                    'file_size' => $fileSize,
-                    'file_description' => $file_description,
-                    'file_type' => $file_type
-                ]);
-            }
+            $model->attachments()->create([
+                'file_name' => $fileName,
+                'file_path' => "storage/" . $filePath,
+                'file_size' => $fileSize,
+                'file_description' => $file_description,
+                'file_type' => $file_type,
+                // 'created_by' => $created_by
+            ]);
+            //}
 
             return true;
         } else {

@@ -10,7 +10,7 @@ class Attachment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     public function attachmentable()
     {
@@ -20,5 +20,10 @@ class Attachment extends Model
     public function profile() //added
     {
         return $this->belongsTo(Profile::class);
+    }
+
+    public function cars()
+    {
+        return $this->belongsTo(Car::class);
     }
 }

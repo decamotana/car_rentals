@@ -14,10 +14,12 @@ class CarController extends Controller
      */
     public function index(Request $request)
     {
-        $data = new Car;
-        $data = $data->select([
-            "cars.*",
-        ]);
+        // $data = new Car;
+        // $data = $data->select([
+        //     "cars.*",
+        // ]);
+        $data = Car::with('attachments')
+            ->select(['cars.*']);
 
         if (isset($request->search)) {
             $data = $data->where(function ($q) use ($request) {
@@ -113,18 +115,14 @@ class CarController extends Controller
      */
     public function show($id)
     {
-        $data = Car::find($id);
+        // Reload the car record with its attachments
+        // $carWithAttachments = Car::with('attachments')->find($id);
+        $data =  Car::with('attachments')->find($id);
 
-        if (!$data) {
-            return response()->json(['message' => 'Car not found'], 404);
-        }
-
-        $ret = [
-            "success" => true,
-            "data" => $data
-        ];
-
-        return response()->json($ret, 200);
+        return response()->json([
+            'success'   => true,
+            'data'      => $data
+        ], 200);
     }
 
     /**
@@ -184,40 +182,47 @@ class CarController extends Controller
             "year_model" => $request->year_model,
             "passengers" => $request->passengers,
             "rates" => $request->rates,
+            // "folder_name" =>  "storage/cars/car-{$request->id}/profile_pictures",
         ];
 
-        $query = Car::updateOrCreate(
-            ["id" => $request->id ?? null],
-            $data
-        );
-        if ($query) {
-            $ret = [
-                "success" => true,
-                "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
-            ];
+        try {
+            // Update or create car record
+            $query = Car::updateOrCreate(
+                ["id" => $request->id], // Update if ID exists, otherwise create
+                $data
+            );
 
+            // Check if the record was saved/updated successfully
             if ($query) {
+                // Handle profile picture upload
                 if ($request->hasFile("profile_picture")) {
                     $file = $request->file("profile_picture");
-
                     $this->create_attachment($query, $file, [
-                        'folder_name' => "profiles/profile-$query->id/profile_picture",
+                        'folder_name' => "cars/car-{$query->id}/profile_pictures",
                         'file_description' => "Profile Picture",
+                        'created_by' => "{$request->created_by}",
                     ]);
-
-                    $ret = [
-                        "success" => true,
-                        "message" => "Profile photo updated successfully",
-                    ];
                 }
+
+                // Reload the car record with its attachments
+                $carWithAttachments = Car::with('attachments')->find($query->id);
+
+                // Success response
+                $ret = [
+                    "success" => true,
+                    "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
+                    "data" => $carWithAttachments,
+                ];
             }
-        } else {
+        } catch (\Exception $e) {
+            // Error handling
             $ret = [
                 "success" => false,
-                "message" => "Data not " . ($request->id ? "updated" : "saved"),
+                "message" => "An error occurred: " . $e->getMessage(),
                 "data" => $request->all()
             ];
         }
+
         return response()->json($ret, 200);
     }
 

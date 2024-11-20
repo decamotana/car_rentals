@@ -22,6 +22,7 @@ import validateRules from "../../../../providers/validateRules";
 import { useNavigate, useParams } from "react-router-dom";
 import ModalUploadProfilePicture from "../../PageUser/components/ModalUploadProfilePicture";
 import {
+    apiUrl,
     defaultCar,
     defaultProfile,
     userData,
@@ -33,6 +34,7 @@ import { GET, POST } from "../../../../providers/useAxiosQuery";
 import notificationErrors from "../../../../providers/notificationErrors";
 import moment from "moment";
 import dayjs from "dayjs";
+import { eventListeners } from "@popperjs/core";
 
 export default function AddCar() {
     const navigate = useNavigate();
@@ -42,9 +44,10 @@ export default function AddCar() {
     const [userId, setUserId] = useState(null);
 
     const { mutate: mutateCarAdd } = POST(`api/add_car_list`, "car_list");
+
     GET(`api/cars/${params.id}`, "car_list", (res) => {
         if (res.data) {
-            console.log("sss", res.data);
+            // console.log("sss", res.data);
             let data = res.data;
 
             let name = data.name;
@@ -54,30 +57,6 @@ export default function AddCar() {
             let year_model = moment(data.year_model, "YYYY");
             let passengers = data.passengers;
             let rates = data.rates;
-
-            // let gender = data.profile.gender;
-
-            // if (
-            //     data.profile &&
-            //     data.profile.attachments &&
-            //     data.profile.attachments.length > 0
-            // ) {
-            //     let profileAttachments = data.profile.attachments.filter(
-            //         (f) => f.file_description === "Profile Picture"
-            //     );
-
-            //     if (profileAttachments.length > 0) {
-            //         setToggleModalUploadProfilePicture({
-            //             open: false,
-            //             file: null,
-            //             src: apiUrl(profileAttachments[0].file_path),
-            //             is_camera: null,
-            //             fileName: null,
-            //         });
-            //     }
-
-            //     //  = data.profile.attachments[0].gender;
-            // }
 
             form.setFieldsValue({
                 // role: data.role,
@@ -93,17 +72,11 @@ export default function AddCar() {
     });
 
     const [
-        toggleModalUserUploadPictureForm,
-        setToggleModalUserUploadPictureForm,
-    ] = useState({
-        open: false,
-        data: null,
-    });
-
-    const [
         toggleModalUploadProfilePicture,
         setToggleModalUploadProfilePicture,
     ] = useState({
+        open: false,
+        data: null,
         open: false,
         file: null,
         src: null,
@@ -111,15 +84,10 @@ export default function AddCar() {
         fileName: null,
     });
 
-    const [fileList, setFileList] = useState({
-        imageUrl: defaultProfile,
-        loading: false,
-        file: null,
-    });
-
     const onFinish = (values) => {
-        console.log("value > ", values);
-        console.log("userId >", userId);
+        // console.log("value > ", values);
+        // console.log("userId >", userId);
+        // console.log("file >", toggleModalUploadProfilePicture.file.name);
 
         if (!userId) {
             notification.error({
@@ -147,10 +115,20 @@ export default function AddCar() {
                 : ""
         );
 
-        if (fileList.file) {
-            console.log("file >", fileList.file);
-            data.append("imagefile", fileList.file);
+        if (
+            toggleModalUploadProfilePicture &&
+            toggleModalUploadProfilePicture.file
+        ) {
+            data.append(
+                "profile_picture",
+                toggleModalUploadProfilePicture.file,
+                toggleModalUploadProfilePicture.file.name
+            );
         }
+
+        // if (fileList.file) {
+        //     data.append("profile_picture", fileList.file);
+        // }
 
         mutateCarAdd(data, {
             onSuccess: (res) => {
@@ -509,18 +487,6 @@ export default function AddCar() {
                             />
                         </Col>
 
-                        {/* <Col xs={24} sm={24} md={24} lg={24} xl={24} xxl={24}>
-                            <Button
-                                key={4}
-                                className="btn-main-primary"
-                                type="primary"
-                                size="large"
-                                onClick={() => form.submit()}
-                            >
-                                SUBMIT
-                            </Button>
-                        </Col> */}
-
                         {params.id ? (
                             <Col
                                 xs={24}
@@ -562,14 +528,14 @@ export default function AddCar() {
                         )}
                     </Row>
                 </Form>
-                <ModalUserUploadPictureForm
+                {/* <ModalUserUploadPictureForm
                     toggleModalUserUploadPictureForm={
                         toggleModalUserUploadPictureForm
                     }
                     setToggleModalUserUploadPictureForm={
                         setToggleModalUserUploadPictureForm
                     }
-                />
+                /> */}
             </Col>
         </Row>
     );

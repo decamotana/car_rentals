@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     Button,
     Col,
+    Image,
     notification,
     Popconfirm,
     Row,
@@ -30,6 +31,8 @@ export default function CarTable(props) {
     // console.log("asd", dataSource);
     const navigate = useNavigate();
     const params = useParams();
+
+    // console.log("datasource >", dataSource);
 
     const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
         POST(`api/delete_car_list`, "add_car_list");
@@ -83,7 +86,14 @@ export default function CarTable(props) {
             <Col xs={24} sm={24} md={24}>
                 <Table
                     className="ant-table-default ant-table-striped"
-                    dataSource={dataSource && dataSource?.data.data}
+                    dataSource={dataSource && dataSource?.data?.data}
+                    // dataSource={
+                    //     dataSource &&
+                    //     dataSource?.data.map((car) => ({
+                    //         ...car,
+                    //         attachments: car.attachments || [], // Ensure attachments are present
+                    //     }))
+                    // }
                     rowKey={(record) => record.id}
                     pagination={false}
                     bordered={false}
@@ -146,6 +156,38 @@ export default function CarTable(props) {
                         }}
                     />
                     <Table.Column
+                        title="Profile"
+                        key="attachments"
+                        dataIndex="attachments"
+                        render={(attachments) => {
+                            if (attachments && attachments.length > 0) {
+                                const profilePic = attachments.find(
+                                    (att) => att.file_type === "image"
+                                );
+                                return profilePic ? (
+                                    <Image
+                                        src={`/${profilePic.file_path}`}
+                                        alt={profilePic.file_name}
+                                        width={50}
+                                        height={50}
+                                        style={{
+                                            objectFit: "cover",
+                                            borderRadius: "50%",
+                                        }}
+                                        preview={{
+                                            src: `/${profilePic.file_path}`, // Path for full preview
+                                        }}
+                                    />
+                                ) : (
+                                    "No profile picture"
+                                );
+                            } else {
+                                return "No profile picture";
+                            }
+                        }}
+                        sorter={true}
+                    />
+                    <Table.Column
                         title="Make"
                         key="name"
                         dataIndex="name"
@@ -176,6 +218,18 @@ export default function CarTable(props) {
                         title="Passengers"
                         key="passengers"
                         dataIndex="passengers"
+                        // sorter
+                    />
+                    <Table.Column
+                        title="Rates"
+                        key="rates"
+                        dataIndex="rates"
+                        // sorter
+                    />
+                    <Table.Column
+                        title="Description"
+                        key="description"
+                        dataIndex="description"
                         // sorter
                     />
                 </Table>
