@@ -161,6 +161,15 @@ export default function TableUser(props) {
                         }}
                     />
                     <Table.Column
+                        title="Profile"
+                        key="attachments"
+                        dataIndex="attachments"
+                        // render={(text, _) =>
+                        //     text ? dayjs(text).format("MM/DD/YYYY") : ""
+                        // }
+                        sorter
+                    />
+                    <Table.Column
                         title="Start Date"
                         key="created_at"
                         dataIndex="created_at"

@@ -124,7 +124,7 @@ class AuthController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Hash the password
-            'role' => 'User',  // Default role
+            'role' => 'Admin',  // Default role
             'status' => 'Active', // Default status
             'remember_token' => (string)Str::random(10),
             'email_verified_at' => Carbon::now(),

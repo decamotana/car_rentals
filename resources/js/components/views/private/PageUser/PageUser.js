@@ -68,7 +68,7 @@ export default function PageUser() {
                         <Button
                             className=" btn-main-primary btn-main-invert-outline b-r-none"
                             icon={<FontAwesomeIcon icon={faPlus} />}
-                            onClick={() => navigate(`/users/current/add`)}
+                            onClick={() => navigate(`/users/add`)}
                             size="large"
                             name="btn_add"
                         >

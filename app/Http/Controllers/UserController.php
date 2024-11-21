@@ -91,6 +91,16 @@ class UserController extends Controller
         $data =  [
             'username' => $request->username,
             'email' => $request->email,
+            'role' => $request->role,
+            'status' => 'Active',
+            'created_by' => $request->created_by,
+            'firstname' => $request->firstname,
+            'middlename' => $request->middlename,
+            'lastname' => $request->lastname,
+            'gender' => $request->gender, // Make sure this is a string
+            // 'residence' => json_encode($request->residence), // Save as JSON string
+            'residence' => $request->residence,
+            'phone' => $request->phone,
         ];
 
         if ($request->password) {

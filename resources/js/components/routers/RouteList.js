@@ -228,7 +228,7 @@ export default function RouteList() {
                         moduleName="User Current Add"
                         title="Users"
                         subtitle="ADD"
-                        pageId="PageUserAdd"
+                        pageId="PageUserEdit"
                         pageHeaderIcon={faUsers}
                         breadcrumb={[
                             {
@@ -395,7 +395,7 @@ export default function RouteList() {
                         moduleName="CARS"
                         title="Car List"
                         subtitle="CAR LIST"
-                        pageId="PageComponents"
+                        pageId="PageUserEdit"
                         pageHeaderIcon={faCog}
                         breadcrumb={[
                             {
@@ -415,7 +415,7 @@ export default function RouteList() {
                         moduleName="Car Current Add"
                         title="Cars"
                         subtitle="ADD"
-                        pageId="CarsAdd"
+                        pageId="PageUserEdit"
                         pageHeaderIcon={faCar}
                         breadcrumb={[
                             {
@@ -439,7 +439,7 @@ export default function RouteList() {
                         moduleName="Car Current Edit"
                         title="Cars"
                         subtitle="EDIT"
-                        pageId="CarsEdit"
+                        pageId="PageUserEdit"
                         pageHeaderIcon={faCar}
                         breadcrumb={[
                             {

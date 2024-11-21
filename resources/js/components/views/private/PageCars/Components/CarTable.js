@@ -161,7 +161,10 @@ export default function CarTable(props) {
                         dataIndex="attachments"
                         render={(attachments) => {
                             if (attachments && attachments.length > 0) {
-                                const profilePic = attachments.find(
+                                const sortedAttachments = attachments.sort(
+                                    (a, b) => b.id - a.id
+                                );
+                                const profilePic = sortedAttachments.find(
                                     (att) => att.file_type === "image"
                                 );
                                 return profilePic ? (

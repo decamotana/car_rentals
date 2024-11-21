@@ -10,6 +10,7 @@ import {
     Col,
     Collapse,
     Form,
+    Image,
     notification,
     Popconfirm,
     Row,
@@ -42,6 +43,7 @@ export default function AddCar() {
     const [formDisabled, setFormDisabled] = useState(true);
     const params = useParams();
     const [userId, setUserId] = useState(null);
+    const [profilePicturePath, setProfilePicturePath] = useState(defaultCar);
 
     const { mutate: mutateCarAdd } = POST(`api/add_car_list`, "car_list");
 
@@ -49,6 +51,7 @@ export default function AddCar() {
         if (res.data) {
             // console.log("sss", res.data);
             let data = res.data;
+            let attachments = res.data.attachments;
 
             let name = data.name;
             let description = data.description;
@@ -57,6 +60,19 @@ export default function AddCar() {
             let year_model = moment(data.year_model, "YYYY");
             let passengers = data.passengers;
             let rates = data.rates;
+
+            // Find the file_path of the profile picture
+            let file_path =
+                attachments && attachments.length > 0
+                    ? attachments
+                          .sort((a, b) => b.id - a.id)
+                          .find(
+                              (attachment) => attachment.file_type === "image"
+                          )
+                    : "No Profile Picture";
+
+            // console.log("attachments", file_path);
+            setProfilePicturePath(file_path || defaultCar);
 
             form.setFieldsValue({
                 // role: data.role,
@@ -67,6 +83,7 @@ export default function AddCar() {
                 brand_name,
                 passengers,
                 rates,
+                file_path,
             });
         }
     });
@@ -409,7 +426,7 @@ export default function AddCar() {
                             />
                         </Col>
 
-                        <Col sm={24} md={24} lg={10} xl={10} xxl={10}>
+                        {/* <Col sm={24} md={24} lg={10} xl={10} xxl={10}>
                             <Collapse
                                 className="collapse-main-primary"
                                 defaultActiveKey={["0"]}
@@ -448,6 +465,89 @@ export default function AddCar() {
                                                                 objectFit:
                                                                     "cover",
                                                             }}
+                                                        />
+
+                                                        <Button
+                                                            type="link"
+                                                            icon={
+                                                                <FontAwesomeIcon
+                                                                    icon={
+                                                                        faCamera
+                                                                    }
+                                                                />
+                                                            }
+                                                            className="btn-upload"
+                                                            onClick={() =>
+                                                                setToggleModalUploadProfilePicture(
+                                                                    (ps) => ({
+                                                                        ...ps,
+                                                                        open: true,
+                                                                    })
+                                                                )
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    <ModalUploadProfilePicture
+                                                        toggleModalUploadProfilePicture={
+                                                            toggleModalUploadProfilePicture
+                                                        }
+                                                        setToggleModalUploadProfilePicture={
+                                                            setToggleModalUploadProfilePicture
+                                                        }
+                                                    />
+                                                </Col>
+                                            </Row>
+                                        ),
+                                    },
+                                ]}
+                            />
+                        </Col> */}
+                        <Col sm={24} md={24} lg={10} xl={10} xxl={10}>
+                            <Collapse
+                                className="collapse-main-primary"
+                                defaultActiveKey={["0"]}
+                                size="middle"
+                                expandIcon={({ isActive }) => (
+                                    <FontAwesomeIcon
+                                        icon={
+                                            isActive ? faAngleUp : faAngleDown
+                                        }
+                                    />
+                                )}
+                                items={[
+                                    {
+                                        key: "0",
+                                        label: "TAKE PHOTO",
+                                        className: "collapse-profile-picture",
+                                        children: (
+                                            <Row gutter={[12, 0]}>
+                                                <Col
+                                                    xs={24}
+                                                    sm={24}
+                                                    md={24}
+                                                    lg={24}
+                                                >
+                                                    <div className="profile-picture-wrapper">
+                                                        <Image
+                                                            alt={
+                                                                profilePicturePath.file_Name
+                                                            }
+                                                            src={
+                                                                toggleModalUploadProfilePicture?.src ||
+                                                                (profilePicturePath?.file_path
+                                                                    ? `/${profilePicturePath.file_path}`
+                                                                    : defaultCar)
+                                                            }
+                                                            // style={{
+                                                            //     width: "100px",
+                                                            //     height: "100px",
+                                                            //     objectFit:
+                                                            //         "cover",
+                                                            //     borderRadius:
+                                                            //         "50%",
+                                                            // }}
+                                                            preview={false}
                                                         />
 
                                                         <Button

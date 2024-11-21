@@ -182,7 +182,7 @@ class CarController extends Controller
             "year_model" => $request->year_model,
             "passengers" => $request->passengers,
             "rates" => $request->rates,
-            // "folder_name" =>  "storage/cars/car-{$request->id}/profile_pictures",
+            "folder_name" =>  $request->folder_name,
         ];
 
         try {
@@ -198,6 +198,7 @@ class CarController extends Controller
                 if ($request->hasFile("profile_picture")) {
                     $file = $request->file("profile_picture");
                     $this->create_attachment($query, $file, [
+
                         'folder_name' => "cars/car-{$query->id}/profile_pictures",
                         'file_description' => "Profile Picture",
                         'created_by' => "{$request->created_by}",
