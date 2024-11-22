@@ -20,6 +20,7 @@ class Profile extends Model
     public function attachments() //added
     {
         // return $this->hasMany(Attachment::class);
-        return $this->morphMany(Attachment::class, 'attachmentable');
+        return $this->morphMany(Attachment::class, 'attachmentable')
+            ->where('attachmentable_type', Profile::class);
     }
 }

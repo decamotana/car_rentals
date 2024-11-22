@@ -182,7 +182,7 @@ class CarController extends Controller
             "year_model" => $request->year_model,
             "passengers" => $request->passengers,
             "rates" => $request->rates,
-            "folder_name" =>  $request->folder_name,
+            "folder_name" =>  "storage/cars/car-{$request->id}/profile_pictures",
         ];
 
         try {

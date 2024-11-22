@@ -28,11 +28,10 @@ import { DELETE, POST } from "../../../../providers/useAxiosQuery";
 
 export default function CarTable(props) {
     const { dataSource, tableFilter, setTableFilter, sortInfo } = props;
-    // console.log("asd", dataSource);
     const navigate = useNavigate();
     const params = useParams();
 
-    // console.log("datasource >", dataSource);
+    console.log("datasource >", dataSource);
 
     const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
         POST(`api/delete_car_list`, "add_car_list");

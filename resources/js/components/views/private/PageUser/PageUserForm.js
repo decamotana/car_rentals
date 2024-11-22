@@ -44,10 +44,14 @@ export default function PageUserForm() {
 
     const [form] = Form.useForm();
     const [formDisabled, setFormDisabled] = useState(true);
+    const [profilePicturePath, setProfilePicturePath] =
+        useState(defaultProfile);
 
     const [dataRoles, setDataRoles] = useState([]);
 
     const { mutate: mutateUserRole } = POST(`api/users`, "users_info");
+
+    const { mutate: mutateProfile } = POST(`api/profile`, "users_info");
 
     const [toggleModalFormEmail, setToggleModalFormEmail] = useState({
         open: false,
@@ -78,6 +82,8 @@ export default function PageUserForm() {
         setToggleModalUploadProfilePicture,
     ] = useState({
         open: false,
+        data: null,
+        open: false,
         file: null,
         src: null,
         is_camera: null,
@@ -94,10 +100,11 @@ export default function PageUserForm() {
 
                 let username = data.username;
                 let email = data.email;
-                let firstname = data.profile.firstname;
-                let lastname = data.profile.lastname;
+                let firstname = data?.profile?.firstname;
+                let middlename = data?.profile?.middlename;
+                let lastname = data?.profile?.lastname;
 
-                let gender = data.profile.gender;
+                let gender = data?.profile?.gender;
 
                 if (
                     data.profile &&
@@ -126,6 +133,7 @@ export default function PageUserForm() {
                     username,
                     email,
                     firstname,
+                    middlename,
                     lastname,
                     gender,
                 });
@@ -141,33 +149,57 @@ export default function PageUserForm() {
         data.append("role", values.role);
         data.append("username", values.username);
         data.append("email", values.email);
-        if (!params.id) {
+
+        if (!params.id && values.password) {
             data.append("password", values.password);
         }
-        data.append("firstname", values.firstname);
-        data.append("lastname", values.lastname);
 
+        data.append("firstname", values.firstname);
+        data.append("middlename", values.middlename);
+        data.append("lastname", values.lastname);
         data.append("gender", values.gender);
 
-        if (fileList.file) {
-            data.append("imagefile", fileList.file);
+        // if (fileList && fileList.file) {
+        //     data.append("imagefile", fileList.file);
+        // }
+
+        if (
+            toggleModalUploadProfilePicture &&
+            toggleModalUploadProfilePicture.file
+        ) {
+            data.append(
+                "profile_picture",
+                toggleModalUploadProfilePicture.file,
+                toggleModalUploadProfilePicture.file.name
+            );
         }
 
         mutateUserRole(data, {
             onSuccess: (res) => {
                 if (res.success) {
-                    if (params.id) {
-                        notification.success({
-                            message: "User",
-                            description: res.message,
-                        });
-                    } else {
-                        notification.success({
-                            message: "User",
-                            description: res.message,
-                        });
-                        navigate("/users");
-                    }
+                    notification.success({
+                        message: "User",
+                        description: res.message,
+                    });
+
+                    // Chain mutateProfile
+                    mutateProfile(data, {
+                        onSuccess: (profileRes) => {
+                            if (profileRes.success) {
+                                notification.success({
+                                    message: "Profile",
+                                    description: profileRes.message,
+                                });
+                                // Navigate only after both mutations succeed
+                                if (!params.id) {
+                                    navigate("/users");
+                                }
+                            }
+                        },
+                        onError: (err) => {
+                            notificationErrors(err);
+                        },
+                    });
                 }
             },
             onError: (err) => {
@@ -228,7 +260,7 @@ export default function PageUserForm() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
-                                                        name="type"
+                                                        name="role"
                                                         rules={[
                                                             validateRules.required(),
                                                         ]}
@@ -431,6 +463,36 @@ export default function PageUserForm() {
                                                     xxl={12}
                                                 >
                                                     <Form.Item
+                                                        name="middlename"
+                                                        rules={[
+                                                            validateRules.required(),
+                                                        ]}
+                                                    >
+                                                        <FloatInput
+                                                            label="Middle Name"
+                                                            placeholder="Middle Name"
+                                                            required={true}
+                                                            disabled={
+                                                                formDisabled
+                                                            }
+                                                            onBlur={() => {
+                                                                if (params.id) {
+                                                                    form.submit();
+                                                                }
+                                                            }}
+                                                        />
+                                                    </Form.Item>
+                                                </Col>
+
+                                                <Col
+                                                    xs={24}
+                                                    sm={24}
+                                                    md={24}
+                                                    lg={12}
+                                                    xl={12}
+                                                    xxl={12}
+                                                >
+                                                    <Form.Item
                                                         name="lastname"
                                                         rules={[
                                                             validateRules.required(),
@@ -511,14 +573,26 @@ export default function PageUserForm() {
                                                     lg={24}
                                                 >
                                                     <div className="profile-picture-wrapper">
-                                                        <img
+                                                        <Image
+                                                            alt={
+                                                                profilePicturePath.file_name
+                                                            }
+                                                            src={
+                                                                toggleModalUploadProfilePicture?.src ||
+                                                                (profilePicturePath?.file_path
+                                                                    ? `/${profilePicturePath.file_path}`
+                                                                    : defaultProfile)
+                                                            }
+                                                            preview={false}
+                                                        />
+                                                        {/* <img
                                                             alt=""
                                                             src={
                                                                 toggleModalUploadProfilePicture.src
                                                                     ? toggleModalUploadProfilePicture.src
                                                                     : defaultProfile
                                                             }
-                                                        />
+                                                        /> */}
 
                                                         <Button
                                                             type="link"

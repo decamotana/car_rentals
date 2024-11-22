@@ -6,6 +6,7 @@ import {
     notification,
     Popconfirm,
     Tooltip,
+    Image,
 } from "antd";
 import { POST, GET, DELETE } from "../../../../providers/useAxiosQuery";
 import {
@@ -29,11 +30,13 @@ export default function TableUser(props) {
 
     const navigate = useNavigate();
 
+    console.log("datasource >", dataSource);
+
     const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
         DELETE(`api/users`, "user_list");
 
     const handleDeactivate = (record) => {
-        console.log("record >", record);
+        // console.log("record >", record);
         mutateDeactivateUser(record, {
             onSuccess: (res) => {
                 if (res.success) {
@@ -162,12 +165,40 @@ export default function TableUser(props) {
                     />
                     <Table.Column
                         title="Profile"
-                        key="attachments"
-                        dataIndex="attachments"
-                        // render={(text, _) =>
-                        //     text ? dayjs(text).format("MM/DD/YYYY") : ""
-                        // }
-                        sorter
+                        key="profile"
+                        dataIndex="profile"
+                        render={(profile) => {
+                            const attachments = profile?.attachments || [];
+
+                            if (attachments && attachments.length > 0) {
+                                const sortedAttachments = attachments.sort(
+                                    (a, b) => b.id - a.id
+                                );
+                                const profilePic = sortedAttachments.find(
+                                    (att) => att.file_type === "image"
+                                );
+                                return profilePic ? (
+                                    <Image
+                                        src={`/${profilePic.file_path}`}
+                                        alt={profilePic.file_name}
+                                        width={50}
+                                        height={50}
+                                        style={{
+                                            objectFit: "cover",
+                                            borderRadius: "50%",
+                                        }}
+                                        preview={{
+                                            src: `/${profilePic.file_path}`, // Path for full preview
+                                        }}
+                                    />
+                                ) : (
+                                    "No profile picture"
+                                );
+                            } else {
+                                return "No profile picture";
+                            }
+                        }}
+                        sorter={true}
                     />
                     <Table.Column
                         title="Start Date"

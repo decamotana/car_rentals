@@ -57,11 +57,13 @@ class User extends Authenticatable
 
     public function profile()
     {
-        return $this->hasOne(Profile::class, "user_id");
+        return $this->hasOne(Profile::class, "id");
     }
 
     public function attachments()
     {
-        return $this->morphMany(Attachment::class, 'attachmentable');
+        // return $this->morphMany(Attachment::class, 'attachmentable');
+        return $this->morphMany(Attachment::class, 'attachmentable')
+            ->where('attachmentable_type', User::class);
     }
 }

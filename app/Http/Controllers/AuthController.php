@@ -96,64 +96,113 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $ret = [
+            "success" => true,
+            "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
+            "data" => $request->all()
+        ];
         // Uncomment this to see the request data
         // dd($request->all());
 
         // Validate the user input
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|string|max:255',
-            'middlename' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'confirm' => 'required_with:password|string|same:password|min:8',
-            'gender' => 'required|string', // Validate gender as string
-            'residence' => 'required|string|max:255',
-            // 'residence' => 'required|array', // Change to array validation
-            // 'residence.*' => 'string', // Ensure each item in the array is a string
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'firstname' => 'required|string|max:255',
+        //     'middlename' => 'required|string|max:255',
+        //     'lastname' => 'required|string|max:255',
+        //     'phone' => 'required|string|max:15',
+        //     'username' => 'required|string|max:255|unique:users',
+        //     'email' => 'required|string|email|max:255|unique:users',
+        //     'password' => 'required|string|min:8',
+        //     'confirm' => 'required_with:password|string|same:password|min:8',
+        //     'gender' => 'required|string', // Validate gender as string
+        //     'residence' => 'required|string|max:255',
+        //     // 'residence' => 'required|array', // Change to array validation
+        //     // 'residence.*' => 'string', // Ensure each item in the array is a string
+        // ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+        $createdBy = 0;
+
+        $userData =  [
+            'username' => $request->username,
+            'email' => $request->email,
+            'remember_token' => (string)Str::random(10),
+            'email_verified_at' => Carbon::now(),
+            'created_by' => $createdBy,
+            'role' => $request->role ?: 'Admin',
+            'status' => $request->status ?: 'Active',
+        ];
+
+        if ($request->password) {
+            $userData['password'] = Hash::make($request->password);
         }
 
         // Save the user to the database
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash the password
-            'role' => 'Admin',  // Default role
-            'status' => 'Active', // Default status
-            'remember_token' => (string)Str::random(10),
-            'email_verified_at' => Carbon::now(),
-            'created_by' => 1,
-        ]);
+        // $user = User::create([
+        //     'username' => $request->username,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password), // Hash the password
+        //     'role' => 'Admin',  // Default role
+        //     'status' => 'Active', // Default status
+        //     'remember_token' => (string)Str::random(10),
+        //     'email_verified_at' => Carbon::now(),
+        //     'created_by' => 1,
+        // ]);
+
+        $user = User::create(
+            $userData
+        );
 
         // Generate API token for the user
-        $tokenResult = $user->createToken('auth_token');
-        $token = $tokenResult->accessToken;
+        if (!$request->id) { // Only generate a token if creating a new user
+            $tokenResult = $user->createToken('auth_token');
+            $token = $tokenResult->accessToken;
 
-        // Save the user's profile to the database
-        $profile = Profile::create([
+            // Return the response with the token
+            $ret['token'] = $token;
+        }
+
+        $profileData =  [
             'firstname' => $request->firstname,
             'middlename' => $request->middlename,
             'lastname' => $request->lastname,
+            'name_ext' => $request->name_ext,
             'gender' => $request->gender, // Make sure this is a string
-            // 'residence' => json_encode($request->residence), // Save as JSON string
             'residence' => $request->residence,
             'phone' => $request->phone,
-            'user_id' => $user->id,  // Foreign key reference
-            'created_by' => $user->id,
-        ]);
+            'user_id' => $createdBy,  // Foreign key reference
+        ];
+
+        $profile = Profile::create($profileData);
+        // Save the user's profile to the database  
+        // $profile = Profile::create([
+        //     'firstname' => $request->firstname,
+        //     'middlename' => $request->middlename,
+        //     'lastname' => $request->lastname,
+        //     'gender' => $request->gender, // Make sure this is a string
+        //     // 'residence' => json_encode($request->residence), // Save as JSON string
+        //     'residence' => $request->residence,
+        //     'phone' => $request->phone,
+        //     'user_id' => $user->id,  // Foreign key reference
+        //     'created_by' => $user->id,
+        // ]);
 
         // Return a success response
-        return response()->json([
-            'message' => 'User registered successfully!',
-            'user' => $user,
-            'profile' => $profile,
-            'token' => $token,
-        ], 201);
+        $ret = [
+            "success" => false,
+            "message" => "Operation failed. Data could not be " . ($request->id ? "updated" : "created") . ".",
+        ];
+
+        if ($user || $profile) {
+            $ret = [
+                "success" => true,
+                "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
+                'token' => $token ?? null, // Only include token if it's set
+            ];
+        }
+
+        return response()->json($ret, $ret['success'] ? 200 : 500);
     }
 }

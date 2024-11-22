@@ -19,6 +19,6 @@ class Car extends Model
     public function attachments()
     {
         return $this->morphMany(Attachment::class, 'attachmentable')
-            ->where('attachmentable_type', Car::class);;
+            ->where('attachmentable_type', Car::class);
     }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate, useParams } from "react-router-dom";
 import {
     Alert,
     AutoComplete,
@@ -12,6 +12,7 @@ import {
     Input,
     InputNumber,
     Layout,
+    notification,
     Row,
     Select,
     Typography,
@@ -91,47 +92,104 @@ const tailFormItemLayout = {
 export default function PageSignUp() {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const params = useParams();
+    // const [user, setUser] = useState(null);
+
+    const { mutate: mutateSignUp } = POST(`api/register`, "users_info");
+
+    const { mutate: mutateLogin } = POST(`api/login`, "login");
 
     const onFinish = (values) => {
-        // console.log("Values of form to send in database: ", values);
-        mutation.mutate(values);
+        let data = new FormData();
+        data.append("id", params.id ? params.id : "");
+        data.append("role", values.role);
+        data.append("username", values.username);
+        data.append("email", values.email);
+
+        if (!params.id && values.password) {
+            data.append("password", values.password);
+        }
+
+        data.append("firstname", values.firstname);
+        data.append("middlename", values.middlename);
+        data.append("lastname", values.lastname);
+        data.append("gender", values.gender);
+
+        mutateSignUp(data, {
+            onSuccess: (res) => {
+                if (res.success) {
+                    notification.success({
+                        message: "SignUp",
+                        description: res.message,
+                    });
+
+                    // Prepare login data (minimal fields)
+                    let loginData = new FormData();
+                    loginData.append("username", values.username);
+                    loginData.append("password", values.password);
+
+                    mutateLogin(loginData, {
+                        onSuccess: (login) => {
+                            if (login.success) {
+                                notification.success({
+                                    message: "Login",
+                                    description: login.message,
+                                });
+                                // Directly pass the login user data to navigate
+                                navigate("/userHome", {
+                                    state: { user: login.user },
+                                });
+                            }
+                        },
+                        onError: (err) => {
+                            notificationErrors(err);
+                        },
+                    });
+                }
+            },
+            onError: (err) => {
+                notificationErrors(err);
+            },
+        });
     };
 
-    const mutation = POST("api/register", "register", async (resData) => {
-        console.log("RestData >", resData);
+    // const mutateProfile = POST("api/profile", "users_info");
 
-        if (!resData || !resData.user.email) {
-            console.error("Registration is missing email");
-            return;
-        }
+    // const mutation = POST("api/register", "users_info", async (resData) => {
+    //     console.log("RestData >", resData);
 
-        // Step 1: Registration was successful, now initiate the login request
-        try {
-            // console.log("resdata.emali >", resData.email);
-            // Assuming your login API accepts email and password
-            const loginResponse = await axios.post("/api/login", {
-                email: resData.user.email, // Use the email from the registration response or form
-                password: form.getFieldValue("password"), // Get the password from the form data
-            });
+    //     if (!resData || !resData.user?.email) {
+    //         console.error("Registration is missing email");
+    //         return;
+    //     }
 
-            // Step 2: Store the token from the login response (adjust as needed for your auth)
-            const token = loginResponse.data.token;
-            localStorage.setItem("authToken", token);
+    //     // Step 1: Registration was successful, now initiate the login request
+    //     try {
+    //         // console.log("resdata.emali >", resData.email);
+    //         // Assuming your login API accepts email and password
+    //         const loginResponse = await axios.post("/api/login", {
+    //             email: resData.user.email, // Use the email from the registration response or form
+    //             password: form.getFieldValue("password"), // Get the password from the form data
+    //         });
 
-            // console.log("token >", localStorage.setItem("authToken", token));
+    //         // Step 2: Store the token from the login response (adjust as needed for your auth)
+    //         const token = loginResponse.data.token;
+    //         localStorage.setItem("authToken", token);
 
-            // Step 3: Reset the form and redirect to the desired page
-            form.resetFields();
+    //         // console.log("token >", localStorage.setItem("authToken", token));
 
-            const { username } = resData.user;
+    //         // Step 3: Reset the form and redirect to the desired page
+    //         form.resetFields();
 
-            // console.log("username >", username);
-            navigate("/userHome", { state: { username } });
-        } catch (error) {
-            console.error("Automatic sign-in failed:", error);
-            // Optionally handle the error (show a message, etc.)
-        }
-    });
+    //         const { username } = resData.user;
+
+    //         // console.log("username >", username);
+    //         navigate("/userHome", { state: { username } });
+    //     } catch (error) {
+    //         console.error("Automatic sign-in failed:", error);
+    //         // Optionally handle the error (show a message, etc.)
+    //     }
+    // });
 
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>
@@ -190,7 +248,7 @@ export default function PageSignUp() {
                     }}
                 >
                     {/* <Row gutter={24}> */}
-                    {mutation.error && (
+                    {/* {mutation.error && (
                         <Alert
                             message="Registration Failed"
                             description={
@@ -200,7 +258,7 @@ export default function PageSignUp() {
                             type="error"
                             showIcon
                         />
-                    )}
+                    )} */}
                     <Form
                         {...formItemLayout}
                         form={form}
@@ -505,7 +563,7 @@ export default function PageSignUp() {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                loading={mutation.isLoading}
+                                // loading={mutation.isLoading}
                             >
                                 Register
                             </Button>

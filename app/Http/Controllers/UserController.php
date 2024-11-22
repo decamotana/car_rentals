@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Laravel\Ui\Presets\React;
+use illuminate\Support\Str;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -20,10 +22,20 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $data = new User;
-        $data = $data->select([
-            "users.*",
-        ]);
+        // $data = new User;
+        // $data = $data->select([
+        //     "users.*",
+        // ]);
+
+        $data = User::with([
+            "profile" => function ($query) {
+                $query->with([
+                    "attachments" => function ($query) {
+                        $query->orderBy("id", "desc");
+                    },
+                ]);
+            }
+        ])->select(['users.*']);
 
         if (isset($request->search)) {
             $data = $data->where(function ($q) use ($request) {
@@ -75,6 +87,7 @@ class UserController extends Controller
         $ret = [
             "success" => true,
             "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
+            "data" => $request->all()
         ];
 
         $request->validate([
@@ -88,48 +101,69 @@ class UserController extends Controller
             ]
         ]);
 
+        // Fetch the authenticated user
+        $userId = auth()->user(); // Ensure authentication middleware is applied
+
+        if (!$userId) {
+            return response()->json([
+                "success" => false,
+                "message" => "Unauthorized access. User not found."
+            ], 401);
+        }
+        $createdBy = $userId ? $userId->id : 0;
+        // $createdBy = 0;
+
         $data =  [
             'username' => $request->username,
             'email' => $request->email,
-            'role' => $request->role,
-            'status' => 'Active',
-            'created_by' => $request->created_by,
-            'firstname' => $request->firstname,
-            'middlename' => $request->middlename,
-            'lastname' => $request->lastname,
-            'gender' => $request->gender, // Make sure this is a string
-            // 'residence' => json_encode($request->residence), // Save as JSON string
-            'residence' => $request->residence,
-            'phone' => $request->phone,
+            'remember_token' => (string)Str::random(10),
+            'email_verified_at' => Carbon::now(),
+            'created_by' => $createdBy,
+            'role' => $request->role ?: 'Admin',
+            'status' => $request->status ?: 'Active',
         ];
+
 
         if ($request->password) {
             $data['password'] = Hash::make($request->password);
         }
 
-        if ($request->status) {
-            $data['status'] = $request->status;
-        }
+        // if ($request->status) {
+        //     // $data['status'] = $request->status;
+        //     $data['status'] = 'Active';
+        // }
 
-        if ($request->role) {
-            $data['role'] = $request->role;
-        }
+        // if ($request->role) {
+        //     $data['role'] = $request->role ?: 'Admin';
+        // }
 
-        if ($request->id) {
-            $data['updated_by'] = $request->updated_by;
-        } else {
-            $data['created_by'] = $request->created_by;
-        }
+        // if ($request->id) {
+        //     $data['updated_by'] = $userId->id ?: null;
+        // } else {
+        //     $data['created_by'] = $userId->id ?: null;
+        // }
+        $data[$request->id ? 'updated_by' : 'created_by'] = $createdBy;
 
-        $data = User::updateOrCreate(
+        $user = User::updateOrCreate(
             ['id' => $request->id],
             $data
         );
 
-        if ($data) {
+        // Generate API token for the user (for API authentication)
+        if (!$request->id) { // Only generate a token if creating a new user
+            $tokenResult = $user->createToken('auth_token');
+            $token = $tokenResult->accessToken;
+
+            // Return the response with the token
+            $ret['token'] = $token;
+        }
+
+
+        if ($user) {
             $ret = [
                 "success" => true,
                 "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
+                'token' => $token,
             ];
         }
 
@@ -153,6 +187,14 @@ class UserController extends Controller
                 ]);
             }
         ])->find($id);
+
+        // Check if user exists
+        if (!$data) {
+            return response()->json([
+                "success" => false,
+                "message" => "User not found.",
+            ], 404);
+        }
 
         $ret = [
             "success" => true,
