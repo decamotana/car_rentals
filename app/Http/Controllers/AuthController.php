@@ -62,6 +62,29 @@ class AuthController extends Controller
                         'message' => 'Your account is deactivated. Please contact the administrator.',
                     ];
                 }
+            } else {
+                $credentials = [
+                    'username' => $request->username,
+                    'password' => $request->password
+                ];
+
+                if (auth()->attempt($credentials)) {
+                    $user = auth()->user();
+
+                    if ($user->status == "Active") {
+                        $ret = [
+                            'success' => true,
+                            'message' => 'Login successfully.',
+                            'data' => $this->login_data($user),
+                            'token' => $user->createToken('authToken')->accessToken
+                        ];
+                    } else {
+                        $ret = [
+                            'success' => false,
+                            'message' => 'Your account is deactivated. Please contact the administrator.',
+                        ];
+                    }
+                }
             }
         }
 
@@ -131,7 +154,7 @@ class AuthController extends Controller
             'remember_token' => (string)Str::random(10),
             'email_verified_at' => Carbon::now(),
             'created_by' => $createdBy,
-            'role' => $request->role ?: 'Admin',
+            'role' => 'Admin',
             'status' => $request->status ?: 'Active',
         ];
 

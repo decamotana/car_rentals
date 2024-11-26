@@ -11,6 +11,7 @@ import {
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import ClientRoute from "./ClientRoute";
+import UserRoute from "./UserRoute";
 
 import Page404 from "../views/errors/Page404";
 import PageRequestPermission from "../views/errors/PageRequestPermission";
@@ -127,12 +128,20 @@ export default function RouteList() {
             />
 
             <Route
-                path="/userHome"
+                path="/userDashboard"
                 element={
-                    <ClientRoute
-                        title="User Home Page"
-                        pageId="UserHome"
-                        component={PageUsersComponents}
+                    <UserRoute
+                        moduleName="User Page"
+                        title="Dashboard"
+                        subtitle="User"
+                        pageId="PageUserDashboard"
+                        pageHeaderIcon={faHome}
+                        breadcrumb={[
+                            {
+                                name: "User Dashboard",
+                            },
+                        ]}
+                        component={PageDashboard}
                     />
                 }
             />

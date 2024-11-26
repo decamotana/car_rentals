@@ -24,7 +24,7 @@ export default function Private(props) {
         className,
     } = props;
 
-    // console.log("Private props", props);
+    console.log("Private props Client", props);
 
     const items = new Array(15).fill(null).map((_, index) => ({
         key: index + 1,

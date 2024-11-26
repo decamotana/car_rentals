@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Layout, Menu, Typography } from "antd";
+import { Image, Layout, Menu, Typography } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 
-import { logoFullWidth, name, role } from "../../providers/companyInfo";
+import {
+    defaultCar,
+    logoFullWidth,
+    name,
+    role,
+} from "../../providers/companyInfo";
 import { adminSideMenu } from "./components/SideMenuList";
 
 export default function Sidemenu(props) {
@@ -203,7 +208,27 @@ export default function Sidemenu(props) {
 
                 <div className="logo_wrapper">
                     {!sideMenuCollapse && (
-                        <img src={logoFullWidth} alt={name} width="150px" />
+                        <>
+                            <img
+                                src={defaultCar}
+                                alt={name}
+                                style={{
+                                    objectFit: "cover",
+                                    borderRadius: "100%", // Keep the border-radius for styling
+                                    width: "50px", // Adjust the size as needed
+                                    height: "50px", // Keep height consistent with width
+                                    display: "block", // Ensures proper centering in textAlign: center
+                                    margin: "0 auto", // Centers the image horizontally
+                                }}
+                            />
+
+                            <Typography.Title
+                                level={3}
+                                style={{ color: "orange", marginLeft: "10px" }}
+                            >
+                                J&A Car Rental
+                            </Typography.Title>
+                        </>
                     )}
                 </div>
             </div>

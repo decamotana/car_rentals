@@ -19,7 +19,8 @@ import {
 } from "antd";
 import { POST } from "../../../providers/useAxiosQuery";
 import { constrainPoint } from "@fullcalendar/core/internal";
-import { name } from "../../../providers/companyInfo";
+import { encrypt, name } from "../../../providers/companyInfo";
+import notificationErrors from "../../../providers/notificationErrors";
 
 const { Option } = Select;
 const residences = [
@@ -97,7 +98,10 @@ export default function PageSignUp() {
 
     const { mutate: mutateSignUp } = POST(`api/register`, "users_info");
 
-    const { mutate: mutateLogin } = POST(`api/login`, "login");
+    const { mutate: mutateLogin, isLoading: isLoadingButtonLogin } = POST(
+        `api/login`,
+        "login"
+    );
 
     const onFinish = (values) => {
         let data = new FormData();
@@ -129,16 +133,25 @@ export default function PageSignUp() {
                     loginData.append("password", values.password);
 
                     mutateLogin(loginData, {
-                        onSuccess: (login) => {
-                            if (login.success) {
-                                notification.success({
-                                    message: "Login",
-                                    description: login.message,
-                                });
+                        onSuccess: (res) => {
+                            if (res.data) {
+                                localStorage.userdata = encrypt(
+                                    JSON.stringify(res.data)
+                                );
+                                localStorage.token = res.token;
+
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 500);
+
+                                // notification.success({
+                                //     message: "Login",
+                                //     description: res.message,
+                                // });
                                 // Directly pass the login user data to navigate
-                                navigate("/userHome", {
-                                    state: { user: login.user },
-                                });
+                                // navigate("/userDashboard", {
+                                //     state: { user: res.user },
+                                // });
                             }
                         },
                         onError: (err) => {
@@ -563,7 +576,7 @@ export default function PageSignUp() {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                // loading={mutation.isLoading}
+                                loading={isLoadingButtonLogin}
                             >
                                 Register
                             </Button>

@@ -25,7 +25,7 @@ export default function Private(props) {
         className,
     } = props;
 
-    // console.log("Private props", props);
+    console.log("Private props private >", props);
 
     const location = useLocation();
     const navigate = useNavigate();
