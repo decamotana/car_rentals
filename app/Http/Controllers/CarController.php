@@ -107,6 +107,34 @@ class CarController extends Controller
         //
     }
 
+    public function image_list()
+    {
+
+        // Fetch cars with their attachments
+        $cars = Car::with('attachments')->get();
+
+        // Format the response to include only the necessary data
+        $formattedCars = $cars->map(function ($car) {
+            return [
+                'id' => $car->id,
+                'name' => $car->name,
+                'type' => $car->type,
+                'brand_name' => $car->brand_name,
+                'passengers' => $car->passengers,
+                'rates' => $car->rates,
+                'status' => $car->status,
+                'description' => $car->description,
+                'images' => $car->attachments->map(function ($attachment) {
+                    return asset('storage/' . $attachment->file_path); // Adjust file path based on your storage configuration
+                }),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedCars,
+        ]);
+    }
     /**
      * Display the specified resource.
      *

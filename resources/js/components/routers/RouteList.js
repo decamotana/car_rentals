@@ -37,6 +37,7 @@ import PageSignUp from "../views/clients/SignUp/PageSignUp";
 import PageUsersComponents from "../views/clients/PageUsers/PageUsersComponents";
 import CarsList from "../views/private/PageCars/CarsList";
 import AddCar from "../views/private/PageCars/Components/AddCar";
+import PageHomeClient from "../layouts/client/PageHomeClient";
 
 export default function RouteList() {
     return (
@@ -128,20 +129,20 @@ export default function RouteList() {
             />
 
             <Route
-                path="/userDashboard"
+                path="/userHome"
                 element={
                     <UserRoute
                         moduleName="User Page"
-                        title="Dashboard"
+                        title="UserHome"
                         subtitle="User"
-                        pageId="PageUserDashboard"
+                        pageId="PageUserHome"
                         pageHeaderIcon={faHome}
                         breadcrumb={[
                             {
-                                name: "User Dashboard",
+                                name: "Home",
                             },
                         ]}
-                        component={PageDashboard}
+                        component={PageHome}
                     />
                 }
             />

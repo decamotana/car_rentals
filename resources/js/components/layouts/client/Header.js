@@ -10,8 +10,10 @@ export default function Header(props) {
         pageHeaderIcon,
         title,
         subtitle,
+        userRole,
     } = props;
 
+    console.log("User Role >", userRole);
     // const items = new Array(15).fill(null).map((_, index) => ({
     //     key: index + 1,
     //     label: `nav ${index + 1}`,
@@ -51,22 +53,30 @@ export default function Header(props) {
                 navigate("/contact-us");
             },
         },
-        // Sign Up
-        {
-            key: "sign-up",
-            label: "Sign Up",
-            onClick: () => {
-                navigate("/sign-up");
-            },
-        },
-        // Sign In
-        {
-            key: "sign-in",
-            label: "Sign In",
-            onClick: () => {
-                navigate("/sign-in");
-            },
-        },
+        ...(!userRole
+            ? [
+                  {
+                      key: "sign-up",
+                      label: "Sign Up",
+                      onClick: () => navigate("/sign-up"),
+                  },
+                  {
+                      key: "sign-in",
+                      label: "Sign In",
+                      onClick: () => navigate("/sign-in"),
+                  },
+              ]
+            : [
+                  {
+                      key: "sign-out",
+                      label: "Sign Out",
+                      onClick: () => {
+                          localStorage.removeItem("token");
+                          localStorage.removeItem("userdata");
+                          window.location.reload();
+                      },
+                  },
+              ]),
     ];
 
     return (

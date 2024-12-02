@@ -24,16 +24,16 @@ export default function PageCarsTitle(props) {
                 <Col xs={24} sm={24} md={12}>
                     <Carousel autoplay>
                         <div>
-                            <h3 style={contentStyle}>1</h3>
+                            <h3 style={contentStyle}>Toyota</h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>2</h3>
+                            <h3 style={contentStyle}>Suzuki</h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>3</h3>
+                            <h3 style={contentStyle}>Ford</h3>
                         </div>
                         <div>
-                            <h3 style={contentStyle}>4</h3>
+                            <h3 style={contentStyle}>Nissan</h3>
                         </div>
                     </Carousel>
                 </Col>

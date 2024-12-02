@@ -24,11 +24,11 @@ export default function PageLogin() {
     );
 
     const onFinishLogin = (values) => {
-        console.log("onFinishLogin", values);
+        // console.log("onFinishLogin", values);
 
         mutateLogin(values, {
             onSuccess: (res) => {
-                console.log("response >", res.data);
+                // console.log("response >", res.data);
                 if (res.data) {
                     localStorage.userdata = encrypt(JSON.stringify(res.data));
                     localStorage.token = res.token;
@@ -37,23 +37,22 @@ export default function PageLogin() {
                     // const { role } = res.data;
                     // console.log("role >", role);
 
-                    if (res.data.role === "Super Admin") {
-                        navigate("/dashboard", {
-                            state: { username: res.data.username },
-                        });
-                    } else {
-                        navigate("/userDashboard", {
-                            state: { username: res.data.username },
-                        });
-                    }
-
                     // console.log("username >", username);
                     // navigate("/userHome", { state: { username } });
 
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    //     // console.log("username >", username);
-                    // }, 500);
+                    setTimeout(() => {
+                        // window.location.reload();
+                        // console.log("username >", username);
+                        if (res.data.role === "Super Admin") {
+                            navigate("/dashboard", {
+                                state: { username: res.data.username },
+                            });
+                        } else if (res.data.role === "Admin") {
+                            navigate("/userHome", {
+                                state: { username: res.data.username },
+                            });
+                        }
+                    }, 500);
                 } else {
                     setErrorMessageLogin({
                         type: "error",

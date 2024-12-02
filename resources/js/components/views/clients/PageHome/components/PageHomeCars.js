@@ -7,7 +7,8 @@ import NissanProx from "../../../../../../../resources/images/NissanProx.jpg";
 import { useNavigate } from "react-router-dom";
 
 export default function PageHomeCars(props) {
-    const {} = props;
+    const { user } = props;
+    // console.log("userName log >", user?.username);
     const Navigate = useNavigate();
 
     const contentStyle = {
@@ -37,13 +38,16 @@ export default function PageHomeCars(props) {
                     <Typography.Title>
                         Welcome to J&A Car Rental
                     </Typography.Title>
-
-                    <Button
-                        className="btn-main-primary"
-                        onClick={reservedClick}
-                    >
-                        Sign up now for Reservation
-                    </Button>
+                    {user?.username ? (
+                        <h1>{user.username}</h1>
+                    ) : (
+                        <Button
+                            className="btn-main-primary"
+                            onClick={reservedClick}
+                        >
+                            Sign up now for Reservation
+                        </Button>
+                    )}
                 </Col>
                 <Col xs={24} sm={24} md={12}>
                     <Carousel autoplay>

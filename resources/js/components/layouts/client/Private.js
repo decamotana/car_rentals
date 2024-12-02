@@ -6,7 +6,7 @@ import { SpinnerDotted } from "spinners-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGifts, faHome, faRefresh } from "@fortawesome/pro-regular-svg-icons";
 
-import { bgColor, name } from "../../providers/companyInfo";
+import { bgColor, name, userData } from "../../providers/companyInfo";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -22,14 +22,15 @@ export default function Private(props) {
         pageHeaderClass,
         pageId,
         className,
+        userRole,
     } = props;
-
-    console.log("Private props Client", props);
 
     const items = new Array(15).fill(null).map((_, index) => ({
         key: index + 1,
         label: `nav ${index + 1}`,
     }));
+
+    // console.log("userROle >", userRole);
 
     return (
         <ClearCache>
@@ -77,7 +78,7 @@ export default function Private(props) {
                     </div>
 
                     <Layout className="layout-client">
-                        <Header />
+                        <Header userRole={userRole} />
 
                         <Layout.Content style={{ padding: "0 48px" }}>
                             <Breadcrumb

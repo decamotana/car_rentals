@@ -12,11 +12,11 @@ export default function Header(props) {
         subtitle,
     } = props;
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userdata");
-        window.location.reload();
-    };
+    // const handleLogout = () => {
+    //     localStorage.removeItem("token");
+    //     localStorage.removeItem("userdata");
+    //     window.location.reload();
+    // };
 
     // const items = new Array(15).fill(null).map((_, index) => ({
     //     key: index + 1,
@@ -29,40 +29,42 @@ export default function Header(props) {
         {
             key: "home",
             label: "Home",
-            onClick: () => {
-                navigate("/");
-            },
+            // onClick: () => {
+            //     navigate("/");
+            // },
         },
         // Our Cars
         {
-            key: "our-cars",
-            label: "Our Cars",
-            onClick: () => {
-                navigate("/our-cars");
-            },
+            key: "rent-cars",
+            label: "Rent Cars",
+            // onClick: () => {
+            //     navigate("/rent-cars");
+            // },
         },
         // About Us
         {
-            key: "about-us",
-            label: "About Us",
-            onClick: () => {
-                navigate("/about-us");
-            },
+            key: "about-user",
+            label: "Profile",
+            // onClick: () => {
+            //     navigate("/about-user");
+            // },
         },
         // Contact Us
         {
-            key: "contact-us",
-            label: "Contact Us",
-            onClick: () => {
-                navigate("/contact-us");
-            },
+            key: "contact-user",
+            label: "Contact",
+            // onClick: () => {
+            //     navigate("/contact-user");
+            // },
         },
         // Sign out
         {
             key: "sign-out",
             label: "Sign Out",
             onClick: () => {
-                handleLogout;
+                localStorage.removeItem("token");
+                localStorage.removeItem("userdata");
+                window.location.reload();
             },
         },
     ];
