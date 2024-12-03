@@ -12,9 +12,25 @@ class CarBookingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+        $data = CarBooking::select([
+            "*"
+        ]);
+
+        if (isset($request->user_id)) {
+            $data = $data->where('user_id', $request->user_id);
+        }
+
+
+        $list = CarBooking::with('users', 'cars')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $list,
+
+        ]);
     }
 
     /**
@@ -26,6 +42,47 @@ class CarBookingController extends Controller
     public function store(Request $request)
     {
         //
+
+        $ret = [
+            "success" => false,
+            "message" => "Booking " . ($request->id ? "update" : "saved"),
+            "data" => $request->all()
+        ];
+
+        $data =  [
+            "car_id" => $request->car_id,
+            "user_id" => $request->user_id,
+            "date_start" => $request->date_start,
+            "date_end" => $request->date_end,
+            "time_start" => $request->time_start,
+            "time_end" => $request->time_end,
+            "status" => $request->status,
+        ];
+
+
+        try {
+            // Update or create car record
+            $query = CarBooking::updateOrCreate(
+                ["id" => $request->id], // Update if ID exists, otherwise create
+                $data
+            );
+
+            // Success response
+            $ret = [
+                "success" => true,
+                "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
+                "data" => $query,
+            ];
+        } catch (\Exception $e) {
+            // Error handling
+            $ret = [
+                "success" => false,
+                "message" => "An error occurred: " . $e->getMessage(),
+                "data" => $request->all()
+            ];
+        }
+
+        return response()->json($ret, 200);
     }
 
     /**

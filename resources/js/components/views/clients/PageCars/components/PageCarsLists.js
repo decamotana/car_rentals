@@ -10,10 +10,20 @@ import {
     Typography,
 } from "antd";
 import axios from "axios";
+import { fal } from "@fortawesome/pro-light-svg-icons";
+import ModalForm from "../../../../providers/modalForm";
 
 export default function PageCarsLists(props) {
     const {} = props;
     const [cars, setCars] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
+    const onOk = () => {
+        setIsModalOpen(false);
+    };
 
     const fetchCars = async () => {
         try {
@@ -112,6 +122,18 @@ export default function PageCarsLists(props) {
                                 <p>Status: {car.status}</p>
                                 <p>Description: {car.description}</p>
                             </div>
+
+                            <Button
+                                className="btn-main-primary"
+                                onClick={openModal}
+                            >
+                                Reserved
+                            </Button>
+                            <ModalForm
+                                open={isModalOpen}
+                                onOk={onOk}
+                                onCancel={closeModal}
+                            />
                         </Card>
                     </Col>
                 ))}

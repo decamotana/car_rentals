@@ -59,6 +59,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class, "id");
     }
+    public function car_booking()
+    {
+        return $this->hasOne(CarBooking::class, "id");
+    }
 
     public function attachments()
     {

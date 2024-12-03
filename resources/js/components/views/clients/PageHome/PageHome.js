@@ -9,7 +9,7 @@ export default function PageHome(props) {
     const {} = props;
 
     const isLoggedIn = localStorage.getItem("token");
-    console.log("has token PageHome>", isLoggedIn);
+    // console.log("has token PageHome>", isLoggedIn);
 
     if (isLoggedIn) {
         const user = userData();
