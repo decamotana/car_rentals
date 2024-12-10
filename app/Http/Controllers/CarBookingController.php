@@ -14,23 +14,45 @@ class CarBookingController extends Controller
      */
     public function index(Request $request)
     {
+        $data = CarBooking::with('cars.attachments', 'users.profile.attachments')
+            ->select(['car_bookings.*']);
 
-        $data = CarBooking::select([
-            "*"
-        ]);
-
-        if (isset($request->user_id)) {
-            $data = $data->where('user_id', $request->user_id);
+        if (isset($request->search)) {
+            $data = $data->where(function ($q) use ($request) {
+                $q->orWhere("name", 'LIKE', "%$request->search%");
+                $q->orWhere("type", 'LIKE', "%$request->search%");
+                $q->orWhere("brand_name", 'LIKE', "%$request->search%");
+            });
         }
 
+        if (isset($request->status)) {
+            $data = $data->where('status', $request->status);
+        }
 
-        $list = CarBooking::with('users', 'cars')->get();
+        if ($request->sort_field && $request->sort_order) {
+            if (
+                $request->sort_field != '' && $request->sort_field != 'undefined' && $request->sort_field != 'null'  &&
+                $request->sort_order != ''  && $request->sort_order != 'undefined' && $request->sort_order != 'null'
+            ) {
+
+                $data->orderBy(isset($request->sort_field) ? $request->sort_field : 'id', isset($request->sort_order)  ? $request->sort_order : 'desc');
+            }
+        } else {
+            $data->orderBy('id', 'desc');
+        }
+
+        if ($request->page_size) {
+            $data = $data
+                ->limit($request->page_size)
+                ->paginate($request->page_size, ['*'], 'page', $request->page_number)->toArray();
+        } else {
+            $data = $data->get();
+        }
 
         return response()->json([
             'success' => true,
-            'data' => $list,
-
-        ]);
+            'data' => $data,
+        ], 200);
     }
 
     /**
@@ -56,7 +78,7 @@ class CarBookingController extends Controller
             "date_end" => $request->date_end,
             "time_start" => $request->time_start,
             "time_end" => $request->time_end,
-            "status" => $request->status,
+            "status" => $request->status ?: 'to verify',
         ];
 
 

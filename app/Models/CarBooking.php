@@ -11,13 +11,13 @@ class CarBooking extends Model
 
     protected $guarded = [];
 
-    public function car()
+    public function cars()
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Car::class, 'car_id');
     }
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class, "id");
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

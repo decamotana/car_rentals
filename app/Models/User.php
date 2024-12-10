@@ -59,9 +59,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class, "id");
     }
-    public function car_booking()
+    public function car_bookings()
     {
-        return $this->hasOne(CarBooking::class, "id");
+        return $this->hasMany(CarBooking::class, "user_id");
     }
 
     public function attachments()

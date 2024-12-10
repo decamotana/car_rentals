@@ -12,14 +12,29 @@ import {
 import axios from "axios";
 import { fal } from "@fortawesome/pro-light-svg-icons";
 import ModalForm from "../../../../providers/modalForm";
+import { userData } from "../../../../providers/companyInfo";
 
 export default function PageCarsLists(props) {
     const {} = props;
     const [cars, setCars] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectCarId, setSelectCarId] = useState(null);
+    const [selectuserId, setSelectUserId] = useState(null);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const user = userData();
+    // console.log("userId >>", user.id);
+    // setUserId(user.id);
+
+    const openModal = (carId, userId) => {
+        setSelectUserId(userId);
+        setSelectCarId(carId);
+        setIsModalOpen(true);
+    };
+    const closeModal = () => {
+        setSelectUserId(null);
+        setSelectCarId(null);
+        setIsModalOpen(false);
+    };
 
     const onOk = () => {
         setIsModalOpen(false);
@@ -110,6 +125,7 @@ export default function PageCarsLists(props) {
                             >
                                 {/* Display additional information */}
                                 <p></p>
+                                <p>Id: {car.id}</p>
                                 <p>Type: {car.type}</p>
                                 <p>Model: {car.brand_name}</p>
                                 <p>Passengers: {car.passengers}</p>
@@ -125,18 +141,33 @@ export default function PageCarsLists(props) {
 
                             <Button
                                 className="btn-main-primary"
-                                onClick={openModal}
+                                onClick={() => openModal(car.id, user.id)}
                             >
                                 Reserved
                             </Button>
-                            <ModalForm
+                            {/* <ModalForm
                                 open={isModalOpen}
                                 onOk={onOk}
                                 onCancel={closeModal}
-                            />
+                                carId={selectCarId}
+                                userId={selectuserId}
+                            /> */}
                         </Card>
                     </Col>
                 ))}
+                {/* <Button
+                    className="btn-main-primary"
+                    onClick={() => openModal(car.id, user.id)}
+                >
+                    Reserved
+                </Button> */}
+                <ModalForm
+                    open={isModalOpen}
+                    onOk={onOk}
+                    onCancel={closeModal}
+                    carId={selectCarId}
+                    userId={selectuserId}
+                />
 
                 {/* <Col xs={24} sm={24} md={8}>
                     <Card

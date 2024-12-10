@@ -38,6 +38,7 @@ import PageUsersComponents from "../views/clients/PageUsers/PageUsersComponents"
 import CarsList from "../views/private/PageCars/CarsList";
 import AddCar from "../views/private/PageCars/Components/AddCar";
 import PageHomeClient from "../layouts/client/PageHomeClient";
+import ReservationList from "../views/private/PageReservation/ReservationList";
 
 export default function RouteList() {
     return (
@@ -461,6 +462,26 @@ export default function RouteList() {
                             },
                         ]}
                         component={AddCar}
+                    />
+                }
+            />
+
+            <Route
+                path="/reservation"
+                element={
+                    <PrivateRoute
+                        // moduleCode="M-04"
+                        moduleName="Car Reservation"
+                        title="Reservation"
+                        subtitle="Car"
+                        pageId="PageReservation"
+                        pageHeaderIcon={faCar}
+                        breadcrumb={[
+                            {
+                                name: "Booking",
+                            },
+                        ]}
+                        component={ReservationList}
                     />
                 }
             />

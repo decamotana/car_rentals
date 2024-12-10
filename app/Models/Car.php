@@ -11,9 +11,9 @@ class Car extends Model
 
     protected $guarded = [];
 
-    public function bookings()
+    public function car_bookings()
     {
-        return $this->hasMany(CarBooking::class);
+        return $this->hasMany(CarBooking::class, 'car_id');
     }
 
     public function attachments()

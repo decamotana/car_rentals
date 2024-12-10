@@ -1,18 +1,53 @@
-import { DatePicker, Form, Input, Modal } from "antd";
+import { DatePicker, Form, Input, Modal, notification } from "antd";
 import { error } from "laravel-mix/src/Log";
 import { values } from "lodash";
 import React, { useState } from "react";
 import FloatDatePicker from "./FloatDatePicker";
 import FloatTimePicker from "./FloatTimePicker";
+import { POST } from "./useAxiosQuery";
 
-export default function modalForm({ open, onOk, onCancel, modalText }) {
+export default function modalForm({ open, onOk, onCancel, carId, userId }) {
     const [form] = Form.useForm();
     const [time, setTime] = useState(null);
+
+    // console.log("select userId >", userId);
+    // console.log("selected carId >", carId);
+
+    const { mutate: mutateBookSchedule, isLoading: isLoadingButtonLogin } =
+        POST(`api/booking`, "booking");
 
     const handleSubmit = () => {
         form.validateFields()
             .then((values) => {
-                console.log("form values >", values);
+                const start_date = values.start_date.format("YYYY-MM-DD");
+                // console.log("startDate>", start_date);
+                const start_time = values.start_time.format("HH:mm:ss");
+                const end_date = values.end_date.format("YYYY-MM-DD");
+                const end_time = values.end_time.format("HH:mm:ss");
+
+                let data = new FormData();
+
+                data.append("car_id", carId);
+                data.append("user_id", userId);
+                data.append("date_start", start_date);
+                data.append("date_end", end_date);
+                data.append("time_start", start_time);
+                data.append("time_end", end_time);
+
+                mutateBookSchedule(data, {
+                    onSuccess: (res) => {
+                        if (res.success) {
+                            notification.success({
+                                message: "Booking Save",
+                                description: res.message,
+                            });
+                        }
+                    },
+                    onError: (err) => {
+                        notification(err);
+                    },
+                });
+                // console.log("Form values in FormData >", data);
                 form.resetFields();
                 onOk();
             })
@@ -22,7 +57,7 @@ export default function modalForm({ open, onOk, onCancel, modalText }) {
     };
 
     const timeChange = (time, timeString) => {
-        console.log("Selected Time:", timeString);
+        // console.log("Selected depart Time:", timeString);
         setTime(time);
     };
 
@@ -52,7 +87,7 @@ export default function modalForm({ open, onOk, onCancel, modalText }) {
                             label="Select Departure Date"
                             required
                             onChange={(date, dateString) =>
-                                console.log("Select Date: ", dateString)
+                                console.log("Select depart Date: ", dateString)
                             }
                             // style={{ width: "100%" }}
                         />
