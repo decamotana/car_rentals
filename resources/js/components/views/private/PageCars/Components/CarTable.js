@@ -33,8 +33,10 @@ export default function CarTable(props) {
 
     console.log("datasource >", dataSource);
 
-    const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
-        POST(`api/delete_car_list`, "add_car_list");
+    const { mutate: mutateDeactivateUser, loading: loadingDeleteCar } = POST(
+        `api/delete_car_list`,
+        "add_car_list"
+    );
 
     const handleDeactivate = (record) => {
         console.log("record >", record);
@@ -141,7 +143,7 @@ export default function CarTable(props) {
                                             <Button
                                                 type="link"
                                                 className="text-danger"
-                                                loading={loadingDeactivateUser}
+                                                loading={loadingDeleteCar}
                                                 name="btn_delete"
                                             >
                                                 <FontAwesomeIcon

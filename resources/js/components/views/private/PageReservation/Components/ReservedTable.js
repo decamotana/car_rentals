@@ -32,6 +32,32 @@ export default function ReservedTable(props) {
 
     // console.log("datasource >", dataSource);
 
+    const { mutate: mutateApprovedReserved, loading: loadingApprovedReserved } =
+        POST(`api/approve_car_reserved`, "Booking_list");
+
+    const handleApproveReservation = (record) => {
+        mutateApprovedReserved(
+            {
+                id: record,
+                status: "Deactivate",
+            },
+            {
+                onSuccess: (res) => {
+                    if (res.success) {
+                        notification.success({
+                            message: "Reservation approved",
+                            description: res.message,
+                        });
+                        navigate("/reservation");
+                    }
+                },
+                onError: (err) => {
+                    notificationErrors(err);
+                },
+            }
+        );
+    };
+
     const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
         POST(`api/delete_car_list`, "add_car_list");
 
@@ -110,10 +136,16 @@ export default function ReservedTable(props) {
                                             type="link"
                                             className="text-primary"
                                             onClick={() => {
-                                                navigate(
-                                                    `${location.pathname}/edit/${record.id}`
+                                                handleApproveReservation(
+                                                    record.id
                                                 );
                                             }}
+                                            loading={loadingApprovedReserved}
+                                            // onClick={() => {
+                                            //     navigate(
+                                            //         `${location.pathname}/edit/${record.id}`
+                                            //     );
+                                            // }}
                                             name="btn_edit"
                                         >
                                             <FontAwesomeIcon
@@ -126,11 +158,6 @@ export default function ReservedTable(props) {
                                         <Button
                                             type="link"
                                             className="text-primary"
-                                            onClick={() => {
-                                                navigate(
-                                                    `${location.pathname}/edit/${record.id}`
-                                                );
-                                            }}
                                             name="btn_edit"
                                         >
                                             <FontAwesomeIcon

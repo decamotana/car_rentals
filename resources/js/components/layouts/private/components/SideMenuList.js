@@ -7,8 +7,9 @@ import {
     faFilePdf,
     faMicrochip,
 } from "@fortawesome/pro-regular-svg-icons";
-import { faCar } from "@fortawesome/pro-solid-svg-icons";
+import { faCar, faCarMirrors } from "@fortawesome/pro-solid-svg-icons";
 import { faCarOn } from "@fortawesome/pro-light-svg-icons";
+import { Children } from "react";
 
 export const adminHeaderMenuLeft = (
     <>
@@ -57,12 +58,29 @@ export const adminSideMenu = [
         title: "Cars",
         path: "/cars",
         icon: <FontAwesomeIcon icon={faCar} />,
+        children: [
+            {
+                title: "Cars List",
+                path: "/cars",
+                icon: <FontAwesomeIcon icon={faCar} />,
+            },
+            {
+                title: "Reserved",
+                path: "/cars/reservation",
+                icon: <FontAwesomeIcon icon={faCarOn} />,
+            },
+            {
+                title: "Booked",
+                path: "/cars/booked",
+                icon: <FontAwesomeIcon icon={faCarMirrors} />,
+            },
+        ],
     },
-    {
-        title: "Reservation",
-        path: "/reservation",
-        icon: <FontAwesomeIcon icon={faCarOn} />,
-    },
+    // {
+    //     title: "Reservation",
+    //     path: "/reservation",
+    //     icon: <FontAwesomeIcon icon={faCarOn} />,
+    // },
     // {
     //     title: "Components",
     //     path: "/components",

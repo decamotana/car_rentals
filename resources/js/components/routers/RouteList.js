@@ -467,7 +467,7 @@ export default function RouteList() {
             />
 
             <Route
-                path="/reservation"
+                path="/cars/reservation"
                 element={
                     <PrivateRoute
                         // moduleCode="M-04"

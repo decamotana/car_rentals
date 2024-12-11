@@ -125,9 +125,49 @@ class CarBookingController extends Controller
      * @param  \App\Models\CarBooking  $carBooking
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CarBooking $carBooking)
+    public function update(Request $request)
     {
         //
+        $ret = [
+            "success" => false,
+            "message" => "Failed to approved booking",
+            "data" => $request->all()
+        ];
+
+        $request->validate([
+            "id" => "required|integer|exists:car_bookings,id", // Ensure ID exists in the database
+            "status" => "required|string", // Ensure status is provided and is a string
+        ]);
+
+        $data =  [
+            "status" => $request->status,
+        ];
+
+
+        try {
+            // Update or create car record
+            $query = CarBooking::find($request->id);
+            if ($query) {
+                $query->update($data);
+                // Success response
+                $ret = [
+                    "success" => true,
+                    "message" => "Booking Approved",
+                    "data" => $query,
+                ];
+            } else {
+                $ret["message"] = "Id not found";
+            }
+        } catch (\Exception $e) {
+            // Error handling
+            $ret = [
+                "success" => false,
+                "message" => "An error occurred: " . $e->getMessage(),
+                "data" => $request->all()
+            ];
+        }
+
+        return response()->json($ret, 200);
     }
 
     /**

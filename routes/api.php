@@ -3,6 +3,7 @@
 use App\Http\Controllers\CarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Monolog\Handler\RotatingFileHandler;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete_list', [App\Http\Controllers\UserController::class, 'delete_list']);
     Route::post('add_car_list', [\App\Http\Controllers\CarController::class, 'add_car_list']);
     Route::post('delete_car_list', [\App\Http\Controllers\CarController::class, 'delete_car_list']);
+
+    Route::post('approve_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'update']);
 
     Route::get('image_list', [\App\Http\Controllers\CarController::class, 'image_list']);
     // END UserController
