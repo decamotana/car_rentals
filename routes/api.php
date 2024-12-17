@@ -37,6 +37,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('delete_car_list', [\App\Http\Controllers\CarController::class, 'delete_car_list']);
 
     Route::post('approve_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'update']);
+    Route::post('delete_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'destroy']);
 
     Route::get('image_list', [\App\Http\Controllers\CarController::class, 'image_list']);
     // END UserController

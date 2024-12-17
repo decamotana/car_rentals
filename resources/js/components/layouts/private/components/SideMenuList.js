@@ -56,7 +56,7 @@ export const adminSideMenu = [
     },
     {
         title: "Cars",
-        path: "/cars",
+        path: "/",
         icon: <FontAwesomeIcon icon={faCar} />,
         children: [
             {
@@ -65,13 +65,13 @@ export const adminSideMenu = [
                 icon: <FontAwesomeIcon icon={faCar} />,
             },
             {
-                title: "Reserved",
+                title: "Reserved List",
                 path: "/cars/reservation",
                 icon: <FontAwesomeIcon icon={faCarOn} />,
             },
             {
-                title: "Booked",
-                path: "/cars/booked",
+                title: "Booked List",
+                path: "/cars/booklist",
                 icon: <FontAwesomeIcon icon={faCarMirrors} />,
             },
         ],

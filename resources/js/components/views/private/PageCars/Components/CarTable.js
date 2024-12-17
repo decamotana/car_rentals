@@ -39,7 +39,7 @@ export default function CarTable(props) {
     );
 
     const handleDeactivate = (record) => {
-        console.log("record >", record);
+        // console.log("record >", record);
         mutateDeactivateUser(record, {
             onSuccess: (res) => {
                 if (res.success) {

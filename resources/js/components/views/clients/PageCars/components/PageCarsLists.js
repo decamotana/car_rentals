@@ -48,8 +48,9 @@ export default function PageCarsLists(props) {
                     Authorization: `Bearer ${token}`,
                 },
             });
+            // console.log("car data ->", response.data);
             if (response.data.success) {
-                console.log("All Car Images:", response.data);
+                // console.log("All Car Images:", response.data);
                 const formattedCars = response.data.data.map((car) => {
                     car.images = car.images.map((image) =>
                         image.replace("/storage", "")
@@ -135,7 +136,26 @@ export default function PageCarsLists(props) {
                                         car.rates || 0
                                     )}`}
                                 </p>
-                                <p>Status: {car.status}</p>
+                                <div>
+                                    {car.booking?.length > 0 ? (
+                                        car.booking.map((bookings, index) => (
+                                            <p
+                                                key={index}
+                                                style={{
+                                                    color: "red",
+                                                    fontStyle: "italic",
+                                                }}
+                                            >
+                                                Not Available
+                                                {index + 1}: {bookings.status}
+                                            </p>
+                                        ))
+                                    ) : (
+                                        <p style={{ color: "green" }}>
+                                            Available
+                                        </p>
+                                    )}
+                                </div>
                                 <p>Description: {car.description}</p>
                             </div>
 

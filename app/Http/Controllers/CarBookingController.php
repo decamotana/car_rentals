@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\CarBooking;
 use Illuminate\Http\Request;
 
@@ -136,36 +137,48 @@ class CarBookingController extends Controller
 
         $request->validate([
             "id" => "required|integer|exists:car_bookings,id", // Ensure ID exists in the database
+            "car_id" => "required|integer|exists:cars,id",
             "status" => "required|string", // Ensure status is provided and is a string
         ]);
+
+        $find  = Car::find($request->car_id);
+        // if ($find->status === 'Active')
+        // {
+        $ret = [
+            "success" => true,
+            "message" => "Booking Approved",
+            "data" => $find->status,
+        ];
+        // }
 
         $data =  [
             "status" => $request->status,
         ];
 
 
-        try {
-            // Update or create car record
-            $query = CarBooking::find($request->id);
-            if ($query) {
-                $query->update($data);
-                // Success response
-                $ret = [
-                    "success" => true,
-                    "message" => "Booking Approved",
-                    "data" => $query,
-                ];
-            } else {
-                $ret["message"] = "Id not found";
-            }
-        } catch (\Exception $e) {
-            // Error handling
-            $ret = [
-                "success" => false,
-                "message" => "An error occurred: " . $e->getMessage(),
-                "data" => $request->all()
-            ];
-        }
+        // try {
+        //     // Update or create car record
+        //     $query = CarBooking::find($request->id);
+        //     if ($query) {
+
+        //         // $query->update($data);
+        //         // Success response
+        //         $ret = [
+        //             "success" => true,
+        //             "message" => "Booking Approved",
+        //             "data" => $query->status,
+        //         ];
+        //     } else {
+        //         $ret["message"] = "Id not found";
+        //     }
+        // } catch (\Exception $e) {
+        //     // Error handling
+        //     $ret = [
+        //         "success" => false,
+        //         "message" => "An error occurred: " . $e->getMessage(),
+        //         "data" => $request->all()
+        //     ];
+        // }
 
         return response()->json($ret, 200);
     }
@@ -176,8 +189,25 @@ class CarBookingController extends Controller
      * @param  \App\Models\CarBooking  $carBooking
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CarBooking $carBooking)
+    public function destroy(Request $request)
     {
         //
+        $ret = [
+            "success" => false,
+            "message" => "Signature not save",
+            "Id" => $request->id
+        ];
+
+        $find_id = CarBooking::find($request->id);
+
+        if ($find_id) {
+            if ($find_id->delete()) {
+                $ret = [
+                    "success" => true,
+                    "message" => "Reservation Deleted"
+                ];
+            }
+        }
+        return response()->json($ret, 200);
     }
 }

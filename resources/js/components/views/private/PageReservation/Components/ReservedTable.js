@@ -32,24 +32,30 @@ export default function ReservedTable(props) {
 
     // console.log("datasource >", dataSource);
 
-    const { mutate: mutateApprovedReserved, loading: loadingApprovedReserved } =
-        POST(`api/approve_car_reserved`, "Booking_list");
+    const {
+        mutate: mutateApprovedReserved,
+        isLoading: loadingApprovedReserved,
+    } = POST(`api/approve_car_reserved`, "Booking_list");
 
     const handleApproveReservation = (record) => {
+        // console.log("record -> ", record);
         mutateApprovedReserved(
             {
-                id: record,
+                id: record.id,
+                car_id: record.car_id,
                 status: "Deactivate",
             },
             {
                 onSuccess: (res) => {
-                    if (res.success) {
-                        notification.success({
-                            message: "Reservation approved",
-                            description: res.message,
-                        });
-                        navigate("/reservation");
-                    }
+                    let status = res.data;
+                    console.log("Status ->", status);
+                    // if (res.success) {
+                    //     notification.success({
+                    //         message: "Reservation approved",
+                    //         description: res.message,
+                    //     });
+                    //     navigate("/cars/reservation");
+                    // }
                 },
                 onError: (err) => {
                     notificationErrors(err);
@@ -58,29 +64,30 @@ export default function ReservedTable(props) {
         );
     };
 
-    const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
-        POST(`api/delete_car_list`, "add_car_list");
+    const {
+        mutate: mutateDisapprovedReserved,
+        isLoading: loadingDisapprorvedReserved,
+    } = POST(`api/delete_car_reserved`, "booking_list");
 
-    const handleDeactivate = (record) => {
-        console.log("record >", record);
-        mutateDeactivateUser(record, {
-            onSuccess: (res) => {
-                if (res.success) {
-                    notification.success({
-                        message: "Car",
-                        description: res.message,
-                    });
-                } else {
-                    notification.error({
-                        message: "Car",
-                        description: res.message,
-                    });
-                }
-            },
-            onError: (err) => {
-                notificationErrors(err);
-            },
-        });
+    const handleDisapproved = (id) => {
+        console.log("record_id >", id);
+        mutateDisapprovedReserved(
+            { id },
+            {
+                onSuccess: (res) => {
+                    if (res.success) {
+                        notification.success({
+                            message: "Reservation",
+                            description: res.message,
+                        });
+                    }
+                    navigate("/cars/reservation");
+                },
+                onError: (err) => {
+                    notificationErrors(err);
+                },
+            }
+        );
     };
 
     const onChangeTable = (pagination, filters, sorter) => {
@@ -137,7 +144,7 @@ export default function ReservedTable(props) {
                                             className="text-primary"
                                             onClick={() => {
                                                 handleApproveReservation(
-                                                    record.id
+                                                    record
                                                 );
                                             }}
                                             loading={loadingApprovedReserved}
@@ -158,7 +165,13 @@ export default function ReservedTable(props) {
                                         <Button
                                             type="link"
                                             className="text-primary"
-                                            name="btn_edit"
+                                            name="btn_disapprove"
+                                            onClick={() => {
+                                                handleDisapproved(record.id);
+                                            }}
+                                            loading={
+                                                loadingDisapprorvedReserved
+                                            }
                                         >
                                             <FontAwesomeIcon
                                                 icon={faThumbsDown}

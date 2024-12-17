@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\CarBooking;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -111,7 +112,7 @@ class CarController extends Controller
     {
 
         // Fetch cars with their attachments
-        $cars = Car::with('attachments')->get();
+        $cars = Car::with(['attachments', 'car_bookings'])->get();
 
         // Format the response to include only the necessary data
         $formattedCars = $cars->map(function ($car) {
@@ -126,6 +127,14 @@ class CarController extends Controller
                 'description' => $car->description,
                 'images' => $car->attachments->map(function ($attachment) {
                     return asset('storage/' . $attachment->file_path); // Adjust file path based on your storage configuration
+                }),
+                'booking' => $car->car_bookings->map(function ($booking) {
+                    return [
+                        'id' => $booking->id,
+                        'status' => $booking->status,
+                        'date_start' => $booking->date_start,
+                        'date_end' => $booking->date_end,
+                    ];
                 }),
             ];
         });

@@ -39,6 +39,8 @@ import CarsList from "../views/private/PageCars/CarsList";
 import AddCar from "../views/private/PageCars/Components/AddCar";
 import PageHomeClient from "../layouts/client/PageHomeClient";
 import ReservationList from "../views/private/PageReservation/ReservationList";
+import { name } from "../providers/companyInfo";
+import BookedList from "../views/private/PageCars/BookedList";
 
 export default function RouteList() {
     return (
@@ -485,6 +487,25 @@ export default function RouteList() {
                     />
                 }
             />
+
+            <Route
+                path="/cars/booklist"
+                element={
+                    <PrivateRoute
+                        moduleName="Booking List"
+                        title="Booked List"
+                        subtitle="Car"
+                        pageId="PageBookingList"
+                        pageHeaderIcon={faCar}
+                        breadcrumb={[
+                            {
+                                name: "List of Booked Cars",
+                            },
+                        ]}
+                        component={BookedList}
+                    />
+                }
+            ></Route>
 
             <Route
                 path="/request-permission"
