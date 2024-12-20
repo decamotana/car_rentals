@@ -48,7 +48,7 @@ export default function PageCarsLists(props) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // console.log("car data ->", response.data);
+            console.log("car data ->", response.data);
             if (response.data.success) {
                 // console.log("All Car Images:", response.data);
                 const formattedCars = response.data.data.map((car) => {
@@ -136,26 +136,79 @@ export default function PageCarsLists(props) {
                                         car.rates || 0
                                     )}`}
                                 </p>
-                                <div>
+                                {/* <div>
                                     {car.booking?.length > 0 ? (
                                         car.booking.map((bookings, index) => (
-                                            <p
-                                                key={index}
-                                                style={{
-                                                    color: "red",
-                                                    fontStyle: "italic",
-                                                }}
-                                            >
-                                                Not Available
-                                                {index + 1}: {bookings.status}
-                                            </p>
+                                            <div key={index}>
+                                                {bookings.status ===
+                                                "Reserved" ? (
+                                                    <p>
+                                                        <p
+                                                            style={{
+                                                                color: "green",
+                                                            }}
+                                                        >
+                                                            Pending
+                                                        </p>
+                                                    </p>
+                                                ) : bookings.status ===
+                                                  "Booked" ? (
+                                                    <p
+                                                        style={{
+                                                            color: "red",
+                                                            fontStyle: "italic",
+                                                        }}
+                                                    >
+                                                        Not Available{" "}
+                                                        {index + 1}:{" "}
+                                                        {bookings.status} <br />
+                                                        <br />
+                                                        <br />
+                                                        <br />
+                                                        Available on{" "}
+                                                        {
+                                                            bookings.date_end
+                                                        } @ {bookings.time_end}
+                                                    </p>
+                                                ) : (
+                                                    <p
+                                                        style={{
+                                                            color: "green",
+                                                        }}
+                                                    >
+                                                        Available
+                                                    </p>
+                                                )}
+                                            </div>
                                         ))
                                     ) : (
                                         <p style={{ color: "green" }}>
                                             Available
                                         </p>
                                     )}
-                                </div>
+                                </div> */}
+
+                                {car.booking ? (
+                                    <div>
+                                        {car.booking.status === "Reserved" ? (
+                                            <p style={{ color: "orange" }}>
+                                                Pending
+                                            </p>
+                                        ) : car.booking.status === "Booked" ? (
+                                            <p style={{ color: "red" }}>
+                                                Not Available Until{" "}
+                                                {car.booking.date_end} @{" "}
+                                                {car.booking.time_end}
+                                            </p>
+                                        ) : (
+                                            <p style={{ color: "green" }}>
+                                                Available
+                                            </p>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p style={{ color: "green" }}>Available</p>
+                                )}
                                 <p>Description: {car.description}</p>
                             </div>
 

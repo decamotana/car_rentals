@@ -37,25 +37,25 @@ export default function ReservedTable(props) {
         isLoading: loadingApprovedReserved,
     } = POST(`api/approve_car_reserved`, "Booking_list");
 
-    const handleApproveReservation = (record) => {
-        // console.log("record -> ", record);
+    const handleApproveReservation = (id) => {
+        console.log("record -> ", id);
         mutateApprovedReserved(
             {
-                id: record.id,
-                car_id: record.car_id,
-                status: "Deactivate",
+                id: id,
+                // car_id: record.car_id,
+                status: "Booked",
             },
             {
                 onSuccess: (res) => {
-                    let status = res.data;
-                    console.log("Status ->", status);
-                    // if (res.success) {
-                    //     notification.success({
-                    //         message: "Reservation approved",
-                    //         description: res.message,
-                    //     });
-                    //     navigate("/cars/reservation");
-                    // }
+                    // let status = res.data;
+                    // console.log("Status ->", status);
+                    if (res.success) {
+                        notification.success({
+                            message: "Reservation approved",
+                            description: res.message,
+                        });
+                        navigate("/cars/reservation");
+                    }
                 },
                 onError: (err) => {
                     notificationErrors(err);
@@ -144,7 +144,7 @@ export default function ReservedTable(props) {
                                             className="text-primary"
                                             onClick={() => {
                                                 handleApproveReservation(
-                                                    record
+                                                    record.id
                                                 );
                                             }}
                                             loading={loadingApprovedReserved}

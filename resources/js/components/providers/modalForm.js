@@ -13,7 +13,7 @@ export default function modalForm({ open, onOk, onCancel, carId, userId }) {
     // console.log("select userId >", userId);
     // console.log("selected carId >", carId);
 
-    const { mutate: mutateBookSchedule, isLoading: isLoadingButtonLogin } =
+    const { mutate: mutateReservedSchedule, isloading: isLoadingButtonLogin } =
         POST(`api/booking`, "booking");
 
     const handleSubmit = () => {
@@ -34,17 +34,35 @@ export default function modalForm({ open, onOk, onCancel, carId, userId }) {
                 data.append("time_start", start_time);
                 data.append("time_end", end_time);
 
-                mutateBookSchedule(data, {
+                mutateReservedSchedule(data, {
                     onSuccess: (res) => {
                         if (res.success) {
                             notification.success({
-                                message: "Booking Save",
+                                message: "Car Reserved",
+                                description: res.message,
+                            });
+                            form.resetFields();
+                            onOk();
+                        } else {
+                            notification.warning({
+                                message: "Reservation Warning",
                                 description: res.message,
                             });
                         }
                     },
                     onError: (err) => {
-                        notification(err);
+                        if (err.response && err.response.status === 409) {
+                            notification.error({
+                                message: "Reservation Conflict",
+                                description: "You selected car have booking.",
+                            });
+                        } else {
+                            notification.error({
+                                message: "ERROR",
+                                description:
+                                    "Unexpected error occured. Plearse Try Again later.",
+                            });
+                        }
                     },
                 });
                 // console.log("Form values in FormData >", data);

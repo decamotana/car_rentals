@@ -18,38 +18,39 @@ export default function BookedTable(props) {
 
     console.log("datasource >", dataSource);
 
-    const {
-        mutate: mutateApprovedReserved,
-        isloading: loadingApprovedReserved,
-    } = POST(`api/approve_car_reserved`, "Booking_list");
+    const { mutate: mutateCarReturned, isloading: loadingApprovedReturned } =
+        POST(`api/approve_car_returned`, "Booking_list");
 
-    // const handleApproveReservation = (record) => {
-    //     mutateApprovedReserved(
-    //         {
-    //             id: record,
-    //             status: "Deactivate",
-    //         },
-    //         {
-    //             onSuccess: (res) => {
-    //                 if (res.success) {
-    //                     notification.success({
-    //                         message: "Reservation approved",
-    //                         description: res.message,
-    //                     });
-    //                     navigate("/cars/reservation");
-    //                 }
-    //             },
-    //             onError: (err) => {
-    //                 notificationErrors(err);
-    //             },
-    //         }
-    //     );
-    // };
+    const handleCarReturned = (id) => {
+        // console.log("Book_id ->", record);
+        mutateCarReturned(
+            {
+                id: id,
+                // car_id: record.car_id,
+                status: "Returned",
+            },
+            {
+                onSuccess: (res) => {
+                    // console.log("response ->", res.data);
+                    if (res.success) {
+                        notification.success({
+                            message: "Returned",
+                            description: res.message,
+                        });
+                        navigate("/cars/booklist");
+                    }
+                },
+                onError: (err) => {
+                    notificationErrors(err);
+                },
+            }
+        );
+    };
 
-    const {
-        mutate: mutateDisapprovedReserved,
-        isloading: loadingDisapprorvedReserved,
-    } = POST(`api/delete_car_reserved`, "booking_list");
+    // const {
+    //     mutate: mutateDisapprovedReserved,
+    //     isloading: loadingDisapprorvedReserved,
+    // } = POST(`api/delete_car_reserved`, "booking_list");
 
     // const handleDisapproved = (id) => {
     //     console.log("record_id >", id);
@@ -99,13 +100,6 @@ export default function BookedTable(props) {
                 <Table
                     className="ant-table-default ant-table-striped"
                     dataSource={dataSource && dataSource?.data?.data}
-                    // dataSource={
-                    //     dataSource &&
-                    //     dataSource?.data.map((car) => ({
-                    //         ...car,
-                    //         attachments: car.attachments || [], // Ensure attachments are present
-                    //     }))
-                    // }
                     rowKey={(record) => record.id}
                     pagination={false}
                     bordered={false}
@@ -125,11 +119,9 @@ export default function BookedTable(props) {
                                             type="link"
                                             className="text-primary"
                                             onClick={() => {
-                                                handleApproveReservation(
-                                                    record.id
-                                                );
+                                                handleCarReturned(record.id);
                                             }}
-                                            isloading={loadingApprovedReserved}
+                                            isloading={loadingApprovedReturned}
                                             // onClick={() => {
                                             //     navigate(
                                             //         `${location.pathname}/edit/${record.id}`
@@ -142,24 +134,6 @@ export default function BookedTable(props) {
                                             />
                                         </Button>
                                     </Tooltip>
-
-                                    {/* <Tooltip title="Disapproved">
-                                        <Button
-                                            type="link"
-                                            className="text-primary"
-                                            name="btn_disapprove"
-                                            onClick={() => {
-                                                handleDisapproved(record.id);
-                                            }}
-                                            isLoading={
-                                                loadingDisapprorvedReserved
-                                            }
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faThumbsDown}
-                                            />
-                                        </Button>
-                                    </Tooltip> */}
                                 </>
                             );
                         }}
@@ -303,11 +277,17 @@ export default function BookedTable(props) {
                         key="remarks"
                         render={(text, record) => {
                             const dateEnd = record.date_end;
+                            const timeEnd = record.time_end;
                             const currentDate = moment();
-                            const endDate = moment(dateEnd);
-                            if (endDate.isBefore(currentDate, "day")) {
+
+                            const endDateTime = moment(
+                                `${dateEnd} ${timeEnd}`,
+                                "YYYY-MM-DD HH:mm:ss"
+                            );
+
+                            if (currentDate.isAfter(endDateTime)) {
                                 const dayPassed = currentDate.diff(
-                                    endDate,
+                                    endDateTime,
                                     "days"
                                 );
                                 return (

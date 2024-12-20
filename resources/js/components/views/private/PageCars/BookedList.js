@@ -11,7 +11,7 @@ export default function BookedList() {
     const [sortInfo, setSortInfo] = useState({
         order: "descend",
         columnKey: "created_at",
-        status: location.pathname === "/booking" ? "Active" : "Deactivate",
+        status: location.pathname === "/booking" ? "Returned" : "Booked",
     });
 
     const [tableFilter, setTableFilter] = useState({
@@ -20,7 +20,7 @@ export default function BookedList() {
         search: "",
         sort_field: "created_at",
         sort_order: "desc",
-        status: "Deactivate",
+        status: "Booked",
         from: location.pathname,
     });
 
@@ -33,8 +33,8 @@ export default function BookedList() {
             sort_order: "desc",
             status:
                 location.pathname === "/Booking/current"
-                    ? "Active"
-                    : "Deactivate",
+                    ? "Returned"
+                    : "Booked",
             from: location.pathname,
         });
 

@@ -11,7 +11,7 @@ export default function ReservationList() {
     const [sortInfo, setSortInfo] = useState({
         order: "descend",
         columnKey: "created_at",
-        status: location.pathname === "/cars" ? "Active" : "Deactivated",
+        status: location.pathname === "/booking" ? "Returned" : "Reserved",
     });
 
     const [tableFilter, setTableFilter] = useState({
@@ -20,7 +20,7 @@ export default function ReservationList() {
         search: "",
         sort_field: "created_at",
         sort_order: "desc",
-        status: "to verify",
+        status: "Reserved",
         from: location.pathname,
     });
 
@@ -32,9 +32,7 @@ export default function ReservationList() {
             sort_field: "created_at",
             sort_order: "desc",
             status:
-                location.pathname === "/cars/current"
-                    ? "Active"
-                    : "Deactivated",
+                location.pathname === "/cars/current" ? "Returned" : "Reserved",
             from: location.pathname,
         });
 

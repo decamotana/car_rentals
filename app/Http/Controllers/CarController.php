@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\CarBooking;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -116,6 +117,7 @@ class CarController extends Controller
 
         // Format the response to include only the necessary data
         $formattedCars = $cars->map(function ($car) {
+            $lastBooking = $car->car_bookings->sortByDesc('created_at')->first();
             return [
                 'id' => $car->id,
                 'name' => $car->name,
@@ -128,14 +130,13 @@ class CarController extends Controller
                 'images' => $car->attachments->map(function ($attachment) {
                     return asset('storage/' . $attachment->file_path); // Adjust file path based on your storage configuration
                 }),
-                'booking' => $car->car_bookings->map(function ($booking) {
-                    return [
-                        'id' => $booking->id,
-                        'status' => $booking->status,
-                        'date_start' => $booking->date_start,
-                        'date_end' => $booking->date_end,
-                    ];
-                }),
+                'booking' => $lastBooking ? [
+                    'id' => $lastBooking->id,
+                    'status' => $lastBooking->status,
+                    // 'date_start' => $booking->date_start,
+                    'date_end' => $lastBooking->date_end,
+                    'time_end' => Carbon::parse($lastBooking->time_end)->format('h:i A'),
+                ] : null,
             ];
         });
 
