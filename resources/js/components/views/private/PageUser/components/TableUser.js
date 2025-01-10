@@ -30,7 +30,7 @@ export default function TableUser(props) {
 
     const navigate = useNavigate();
 
-    console.log("datasource >", dataSource);
+    // console.log("datasource >", dataSource);
 
     const { mutate: mutateDeactivateUser, loading: loadingDeactivateUser } =
         DELETE(`api/users`, "user_list");

@@ -410,4 +410,30 @@ class UserController extends Controller
         }
         return response()->json($ret, 200);
     }
+
+    public function active_Users(Request $request)
+    {
+        // $totalUsers = User::count();
+
+        $active = User::where('status', 'Active')->count();
+
+        // $percentage = $totalUsers > 0 ? ($active / $totalUsers) * 100 : 0;
+
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+        $newUser = User::where('status', 'Active')
+            ->whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', $currentYear)
+            ->count();
+
+        $ret = [
+            "success" => true,
+            "newUser" => $newUser,
+            "active" => $active,
+            // "percentage" => round($percentage, 2),
+        ];
+
+        return response()->json($ret, 200);
+    }
 }

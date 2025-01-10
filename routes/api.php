@@ -28,9 +28,14 @@ Route::middleware('auth:api')->group(function () {
     // UserController
 
     Route::apiResource('users', App\Http\Controllers\UserController::class);
+    Route::get('active_Users', [\App\Http\Controllers\UserController::class, 'active_Users']);
+
     Route::apiResource('profile', App\Http\Controllers\ProfileController::class);
     Route::apiResource('cars', App\Http\Controllers\CarController::class);
+
     Route::apiResource('booking', App\Http\Controllers\CarBookingController::class);
+    Route::get('bookings', [\App\Http\Controllers\CarBookingController::class, 'bookings']);
+    Route::get('reserved', [\App\Http\Controllers\CarBookingController::class, 'reserved']);
 
     Route::post('delete_list', [App\Http\Controllers\UserController::class, 'delete_list']);
     Route::post('add_car_list', [\App\Http\Controllers\CarController::class, 'add_car_list']);

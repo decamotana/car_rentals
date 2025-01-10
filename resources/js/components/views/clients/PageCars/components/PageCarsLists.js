@@ -48,7 +48,7 @@ export default function PageCarsLists(props) {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("car data ->", response.data);
+            // console.log("car data ->", response.data);
             if (response.data.success) {
                 // console.log("All Car Images:", response.data);
                 const formattedCars = response.data.data.map((car) => {
@@ -126,7 +126,7 @@ export default function PageCarsLists(props) {
                             >
                                 {/* Display additional information */}
                                 <p></p>
-                                <p>Id: {car.id}</p>
+                                {/* <p>Id: {car.id}</p> */}
                                 <p>Type: {car.type}</p>
                                 <p>Model: {car.brand_name}</p>
                                 <p>Passengers: {car.passengers}</p>
@@ -215,6 +215,7 @@ export default function PageCarsLists(props) {
                             <Button
                                 className="btn-main-primary"
                                 onClick={() => openModal(car.id, user.id)}
+                                disabled={car.booking?.status === "Booked"}
                             >
                                 Reserved
                             </Button>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\CarBooking;
 use Illuminate\Http\Request;
 
@@ -233,6 +234,30 @@ class CarBookingController extends Controller
                 ];
             }
         }
+        return response()->json($ret, 200);
+    }
+
+    public function bookings()
+    {
+        $data = CarBooking::where('status', 'Booked')->count();
+
+        $ret = [
+            "success" => true,
+            "count" => $data,
+        ];
+
+        return response()->json($ret, 200);
+    }
+
+    public function reserved()
+    {
+        $data = CarBooking::where('status', 'Reserved')->count();
+
+        $ret = [
+            "success" => true,
+            "count" => $data,
+        ];
+
         return response()->json($ret, 200);
     }
 }
