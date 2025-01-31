@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Dropdown, Image, Layout, Menu, Typography } from "antd";
+import { Await, Link, useNavigate, useParams } from "react-router-dom";
+import { Badge, Dropdown, Image, Layout, Menu, Typography } from "antd";
 import {
     apiUrl,
     defaultProfile,
@@ -12,6 +12,7 @@ import { faEdit, faPowerOff } from "@fortawesome/pro-light-svg-icons";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-layout";
 import { faBell } from "@fortawesome/pro-regular-svg-icons";
+import { GET } from "../../providers/useAxiosQuery";
 
 export default function Header(props) {
     const {
@@ -25,6 +26,13 @@ export default function Header(props) {
     } = props;
 
     const [profileImage, setProfileImage] = useState(defaultProfile);
+    const [notification, setNotification] = useState([]);
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate("/cars/reservation");
+    };
 
     useEffect(() => {
         if (userData() && userData().profile_picture) {
@@ -45,6 +53,29 @@ export default function Header(props) {
         window.location.reload();
     };
 
+    useEffect(() => {
+        const fetchNotification = async () => {
+            try {
+                const token = localStorage.getItem("token");
+
+                const res = await axios.get(`/api/getNotification`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                // console.log("unread >", res.data);
+                setNotification(res.data);
+            } catch (error) {
+                console.error("Error fetching notifications:", error);
+            }
+        };
+        fetchNotification();
+        const interval = setInterval(fetchNotification, 3000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     const menuNotification = () => {
         const items = [
             {
@@ -55,12 +86,21 @@ export default function Header(props) {
             {
                 type: "divider",
             },
-
-            {
-                label: "No notification",
-                key: "1",
-            },
         ];
+
+        if (notification?.length > 0) {
+            notification.forEach((notify, index) => {
+                items.push({
+                    label: notify.message,
+                    key: `notify-${index}`,
+                });
+            });
+        } else {
+            items.push({
+                label: "No notifications available", // Use a default message
+                key: "1",
+            });
+        }
 
         return { items };
     };
@@ -175,11 +215,25 @@ export default function Header(props) {
                     placement="bottomRight"
                     overlayClassName="menu-submenu-notification-popup"
                     trigger={["click"]}
+                    onClick={handleClick}
                 >
-                    <FontAwesomeIcon
-                        className="menu-submenu-notification"
-                        icon={faBell}
-                    />
+                    {notification.length > 0 ? (
+                        <Badge
+                            count={notification.length}
+                            offset={[-5, 0]}
+                            showZero
+                        >
+                            <FontAwesomeIcon
+                                className="menu-submenu-notification"
+                                icon={faBell}
+                            />
+                        </Badge>
+                    ) : (
+                        <FontAwesomeIcon
+                            className="menu-submenu-notification"
+                            icon={faBell}
+                        />
+                    )}
                 </Dropdown>
             </div>
         </Layout.Header>

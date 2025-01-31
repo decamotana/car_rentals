@@ -15,7 +15,7 @@ import FacultyMonitoringGraph from "./CollapseItemFacultyMonitoringGraph";
 import { role } from "../../../providers/companyInfo";
 import FacultyMonitoringGraph2 from "./CollapseItemFacultyMonitoringGraph2";
 
-import Highcharts, { Point } from "highcharts";
+import Highcharts, { chart, Point } from "highcharts";
 import highchartsSetOptions from "../../../providers/highchartsSetOptions";
 import { size, values } from "lodash";
 import CountUp from "react-countup";
@@ -55,6 +55,7 @@ export default function PageDashboard() {
     const [newActive, setNewActive] = useState(0);
     const [bookings, setBookings] = useState(0);
     const [reserved, setReserved] = useState(0);
+    const [bookedPerMonth, setBookedPerMonth] = useState([]);
 
     highchartsSetOptions(Highcharts);
     const chartContainerRef = useRef(null);
@@ -86,6 +87,30 @@ export default function PageDashboard() {
             setReserved(res.count);
         }
     });
+
+    const fetchBookings = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.get(`api/bookedPerMonth`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            // console.log("bookings >", res.data.data);
+            if (res.data.success) {
+                setBookedPerMonth(res.data.data);
+            } else {
+                console.error("Failed to fetch bookings:", res.data);
+            }
+        } catch (error) {
+            console.error("Error fetching Booking per month", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchBookings();
+    }, []);
 
     const config = {
         data,
@@ -130,65 +155,105 @@ export default function PageDashboard() {
     }, []);
 
     useEffect(() => {
-        Highcharts.chart(chartContainerRef.current, {
-            chart: {
-                type: "column",
-            },
-            title: {
-                text: "Booking History",
-            },
-            subtitle: {
-                text:
-                    'Source: <a target="_blank" ' +
-                    'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
-            },
-            xAxis: {
-                categories: [
-                    "USA",
-                    "China",
-                    "Brazil",
-                    "EU",
-                    "Argentina",
-                    "India",
-                ],
-                crosshair: true,
-                accessibility: {
-                    description: "Countries",
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: "1000 metric tons (MT)",
-                },
-            },
-            tooltip: {
-                valueSuffix: "(1000 MT)",
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0,
-                },
-            },
-            series: [
-                {
-                    name: "Corn",
-                    data: [387749, 280000, 129000, 64300, 54000, 34300],
-                },
-                {
-                    name: "Wheat",
-                    data: [45321, 140000, 10000, 140500, 19500, 113500],
-                },
-            ],
-        });
+        //{
+        if (bookedPerMonth.length > 0) {
+            const month = bookedPerMonth.map((item) => item.month);
+            const count = bookedPerMonth.map((item) => item.count);
 
-        return () => {
-            if (chartContainerRef.current) {
-                Highcharts.chart(chartContainerRef.current)?.destroy();
-            }
-        };
-    }, []);
+            const chart = Highcharts.chart(chartContainerRef.current, {
+                chart: {
+                    type: "column",
+                },
+                title: {
+                    text: "Booking History",
+                },
+                subtitle: {
+                    text: "Per Month",
+                },
+                xAxis: {
+                    categories: month,
+                    crosshair: true,
+                    accessibility: {
+                        description: "Countries",
+                    },
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: "Number of Unit(s) Rented",
+                    },
+                },
+                tooltip: {
+                    valueSuffix: "(unit(s))",
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0,
+                    },
+                },
+                series: [
+                    {
+                        name: "Total Rented",
+                        data: count,
+                    },
+                ],
+            });
+            return () => {
+                chart.destroy();
+            };
+        }
+
+        //     bookedPerMonth?.map((bookings) => {
+        //         Highcharts.chart(chartContainerRef.current, {
+        //             chart: {
+        //                 type: "column",
+        //             },
+        //             title: {
+        //                 text: "Booking History",
+        //             },
+        //             subtitle: {
+        //                 text:
+        //                     'Source: <a target="_blank" ' +
+        //                     'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+        //             },
+        //             xAxis: {
+        //                 categories: [bookings.month],
+        //                 crosshair: true,
+        //                 accessibility: {
+        //                     description: "Countries",
+        //                 },
+        //             },
+        //             yAxis: {
+        //                 min: 0,
+        //                 title: {
+        //                     text: "1000 metric tons (MT)",
+        //                 },
+        //             },
+        //             tooltip: {
+        //                 valueSuffix: "(1000 MT)",
+        //             },
+        //             plotOptions: {
+        //                 column: {
+        //                     pointPadding: 0.2,
+        //                     borderWidth: 0,
+        //                 },
+        //             },
+        //             series: [
+        //                 {
+        //                     name: "Records",
+        //                     data: [bookings.count],
+        //                 },
+        //             ],
+        //         });
+        //         return () => {
+        //             if (chartContainerRef.current) {
+        //                 Highcharts.chart(chartContainerRef.current)?.destroy();
+        //             }
+        //         };
+        //     });
+        // }
+    }, [bookedPerMonth]);
 
     return (
         // <Row gutter={[12, 12]}>

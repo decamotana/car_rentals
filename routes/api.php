@@ -36,6 +36,8 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('booking', App\Http\Controllers\CarBookingController::class);
     Route::get('bookings', [\App\Http\Controllers\CarBookingController::class, 'bookings']);
     Route::get('reserved', [\App\Http\Controllers\CarBookingController::class, 'reserved']);
+    Route::get('bookedPerMonth', [\App\Http\Controllers\CarBookingController::class, 'bookedPerMonth']);
+    Route::get('getNotification', [\App\Http\Controllers\CarBookingController::class, 'getNotification']);
 
     Route::post('delete_list', [App\Http\Controllers\UserController::class, 'delete_list']);
     Route::post('add_car_list', [\App\Http\Controllers\CarController::class, 'add_car_list']);

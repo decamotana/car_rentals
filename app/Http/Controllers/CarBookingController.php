@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\CarBooking;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CarBookingController extends Controller
 {
@@ -115,11 +117,23 @@ class CarBookingController extends Controller
                 $data
             );
 
+            $bookedId = $query->id;
+
+            Notification::create([
+                "user_id" => $request->user_id,
+                "message" => "A reservation has been " . ($bookedId ? "updated" : "created") . " for Car ID: " . $request->car_id,
+                "status" => "unread",
+                "booking_id" => $bookedId,
+            ]);
+
+            $unreadNotification = $this->getNotification();
+
             // Success response
             $ret = [
                 "success" => true,
                 "message" => "Data " . ($request->id ? "updated" : "saved") . " successfully",
                 "data" => $query,
+                'unread_notification' => $unreadNotification,
             ];
         } catch (\Exception $e) {
             // Error handling
@@ -131,6 +145,11 @@ class CarBookingController extends Controller
         }
 
         return response()->json($ret, 200);
+    }
+
+    public function getNotification()
+    {
+        return Notification::where('status', 'unread')->latest()->get();
     }
 
     /**
@@ -181,6 +200,15 @@ class CarBookingController extends Controller
                         "message" => "Booking Approved",
                         "data" => $query,
                     ];
+
+                    $findNotification = Notification::where('booking_id', $query->id)->first();
+
+                    if ($findNotification) {
+                        $findNotification->update([
+                            "message" => "A reservation for book ID: " . $query->id . "has been done.",
+                            "status" => "read",
+                        ]);
+                    }
                 } else if ($request->status === 'Returned') {
                     $query->update($data);
 
@@ -233,7 +261,18 @@ class CarBookingController extends Controller
                     "message" => "Reservation Deleted"
                 ];
             }
+
+            $findNotification = Notification::where('booking_id', $find_id->id)->first();
+
+            if ($findNotification) {
+                $findNotification->update([
+                    "message" => "A reservation for book ID: " . $find_id->id . " disapproved for some reasons.",
+                    "status" => "read",
+                ]);
+            }
         }
+
+
         return response()->json($ret, 200);
     }
 
@@ -256,6 +295,20 @@ class CarBookingController extends Controller
         $ret = [
             "success" => true,
             "count" => $data,
+        ];
+
+        return response()->json($ret, 200);
+    }
+
+    public function bookedPerMonth()
+    {
+        $data = CarBooking::select(DB::raw('MONTHNAME(created_at) as month, COUNT(*) as count'))
+            ->groupBy(DB::raw('MONTHNAME(created_at)'))
+            ->get();
+
+        $ret = [
+            "success" => true,
+            "data" => $data,
         ];
 
         return response()->json($ret, 200);

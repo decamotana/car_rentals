@@ -38,7 +38,7 @@ export default function ReservedTable(props) {
     } = POST(`api/approve_car_reserved`, "Booking_list");
 
     const handleApproveReservation = (id) => {
-        console.log("record -> ", id);
+        // console.log("record -> ", id);
         mutateApprovedReserved(
             {
                 id: id,
