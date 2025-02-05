@@ -113,7 +113,9 @@ class CarController extends Controller
     {
 
         // Fetch cars with their attachments
-        $cars = Car::with(['attachments', 'car_bookings'])->get();
+        $cars = Car::with(['attachments', 'car_bookings'])
+            ->where('type', '!=', 'Motorcycle')
+            ->get();
 
         // Format the response to include only the necessary data
         $formattedCars = $cars->map(function ($car) {
@@ -143,6 +145,44 @@ class CarController extends Controller
         return response()->json([
             'success' => true,
             'data' => $formattedCars,
+        ]);
+    }
+
+    public function image_motorcyle()
+    {
+        // Fetch cars with their attachments
+        $motors = Car::with(['attachments', 'car_bookings'])
+            ->where('type', 'Motorcycle')
+            ->get();
+
+        // Format the response to include only the necessary data
+        $formattedMotor = $motors->map(function ($motor) {
+            $lastBooking = $motor->car_bookings->sortByDesc('created_at')->first();
+            return [
+                'id' => $motor->id,
+                'name' => $motor->name,
+                'type' => $motor->type,
+                'brand_name' => $motor->brand_name,
+                'passengers' => $motor->passengers,
+                'rates' => $motor->rates,
+                'status' => $motor->status,
+                'description' => $motor->description,
+                'images' => $motor->attachments->map(function ($attachment) {
+                    return asset('storage/' . $attachment->file_path); // Adjust file path based on your storage configuration
+                }),
+                'booking' => $lastBooking ? [
+                    'id' => $lastBooking->id,
+                    'status' => $lastBooking->status,
+                    // 'date_start' => $booking->date_start,
+                    'date_end' => $lastBooking->date_end,
+                    'time_end' => Carbon::parse($lastBooking->time_end)->format('h:i A'),
+                ] : null,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $formattedMotor,
         ]);
     }
     /**

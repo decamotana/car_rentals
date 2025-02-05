@@ -15,13 +15,13 @@ import ModalForm from "../../../../providers/modalForm";
 import { userData } from "../../../../providers/companyInfo";
 
 export default function PageCarsLists(props) {
-    const {} = props;
+    const { user } = props;
     const [cars, setCars] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectCarId, setSelectCarId] = useState(null);
     const [selectuserId, setSelectUserId] = useState(null);
 
-    const user = userData();
+    // const user = userData();
     // console.log("userId >>", user.id);
     // setUserId(user.id);
 
@@ -209,7 +209,9 @@ export default function PageCarsLists(props) {
                                 ) : (
                                     <p style={{ color: "green" }}>Available</p>
                                 )}
-                                <p>Description: {car.description}</p>
+                                <p style={{ lineHeight: "1" }}>
+                                    Description: {car.description}
+                                </p>
                             </div>
 
                             <Button

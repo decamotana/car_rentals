@@ -23,6 +23,8 @@ Route::post('register', [App\Http\Controllers\AuthController::class, 'register']
 // Route::post('register', '\App\Http\Controllers\AuthController@register');
 // Route::post('forgot_password', 'App\Http\Controllers\AuthController@forgot_password');
 // Route::delete('user_deactivate',[App\Http\Controllers\AuthController::class, 'register'])
+Route::get('image_list', [\App\Http\Controllers\CarController::class, 'image_list']);
+Route::get('image_motorcyle', [\App\Http\Controllers\CarController::class, 'image_motorcyle']);
 
 Route::middleware('auth:api')->group(function () {
     // UserController
@@ -47,7 +49,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('approve_car_returned', [\App\Http\Controllers\CarBookingController::class, 'update']);
     Route::post('delete_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'destroy']);
 
-    Route::get('image_list', [\App\Http\Controllers\CarController::class, 'image_list']);
     // END UserController
 
 });

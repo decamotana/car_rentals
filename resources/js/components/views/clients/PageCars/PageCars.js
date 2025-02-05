@@ -3,6 +3,7 @@ import PageToyotaCars from "./toyotaCars";
 import PageCarsTitle from "./components/PageCarsTitle";
 import PageCarsLists from "./components/PageCarsLists";
 import { Navigate } from "react-router-dom";
+import { userData } from "../../../providers/companyInfo";
 
 export default function PageCars(props) {
     const {} = props;
@@ -10,6 +11,15 @@ export default function PageCars(props) {
     // console.log("has token PageHome>", isLoggedIn);
 
     if (isLoggedIn) {
+        const user = userData();
+        return (
+            <>
+                {/* <PageToyotaCars /> */}
+                <PageCarsTitle user={user} />
+                <PageCarsLists user={user} />
+            </>
+        );
+    } else {
         return (
             <>
                 {/* <PageToyotaCars /> */}
@@ -17,7 +27,6 @@ export default function PageCars(props) {
                 <PageCarsLists />
             </>
         );
-    } else {
-        return <Navigate to="/sign-in" />;
+        // return <Navigate to="/sign-in" />;
     }
 }
