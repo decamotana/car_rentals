@@ -41,6 +41,7 @@ import PageHomeClient from "../layouts/client/PageHomeClient";
 import ReservationList from "../views/private/PageReservation/ReservationList";
 import { name } from "../providers/companyInfo";
 import BookedList from "../views/private/PageCars/BookedList";
+import VerifyEmail from "../views/clients/SignUp/VerifyEmail";
 
 export default function RouteList() {
     return (
@@ -127,6 +128,17 @@ export default function RouteList() {
                         title="Sign Up"
                         pageId="PageSignUp"
                         component={PageSignUp}
+                    />
+                }
+            />
+
+            <Route
+                path="/verify-email"
+                element={
+                    <PublicRoute
+                        title="Verifying Email"
+                        pageId="VerifyEmail"
+                        component={VerifyEmail}
                     />
                 }
             />

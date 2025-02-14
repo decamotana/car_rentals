@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\CarController;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Monolog\Handler\RotatingFileHandler;
@@ -26,8 +30,47 @@ Route::post('register', [App\Http\Controllers\AuthController::class, 'register']
 Route::get('image_list', [\App\Http\Controllers\CarController::class, 'image_list']);
 Route::get('image_motorcyle', [\App\Http\Controllers\CarController::class, 'image_motorcyle']);
 
-Route::middleware('auth:api')->group(function () {
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    if (!hash_equals($hash, sha1($user->getEmailForVerification()))) {
+        return response()->json(['message' => 'Invalid verification link'], 400);
+    }
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+    }
+
+    // return response()->json([
+    //     'message' => 'Email verified successfully!',
+    //     'redirect_url' => env('FRONTEND_URL') . '/sign-in'
+    // ]);
+    return redirect(env('FRONTEND_URL') . 'sign-in');
+})->middleware(['signed'])->name('verification.verify');
+
+Route::post('/email/resend', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return response()->json(['message' => 'Verification email resent.']);
+})->middleware(['throttle:6,1'])->name('verification.resend');
+
+Route::middleware(['auth:api'])->group(function () {
     // UserController
+
+    // Route::post('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+
+    // Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+    //     ->middleware(['signed'])
+    //     ->name('verification.verify');
+
+    // Route::post('/email/resend', [VerificationController::class, 'resend'])
+    //     ->middleware(['throttle:6,1'])
+    //     ->name('verification.resend');
+
 
     Route::apiResource('users', App\Http\Controllers\UserController::class);
     Route::get('active_Users', [\App\Http\Controllers\UserController::class, 'active_Users']);

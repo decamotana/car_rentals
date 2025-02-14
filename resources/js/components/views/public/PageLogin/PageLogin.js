@@ -29,7 +29,7 @@ export default function PageLogin() {
         mutateLogin(values, {
             onSuccess: (res) => {
                 // console.log("response >", res.data);
-                if (res.data) {
+                if (res.data && res.data.email_verified_at) {
                     localStorage.userdata = encrypt(JSON.stringify(res.data));
                     localStorage.token = res.token;
 

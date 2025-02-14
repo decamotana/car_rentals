@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -124,35 +125,14 @@ class AuthController extends Controller
             "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
             "data" => $request->all()
         ];
-        // Uncomment this to see the request data
-        // dd($request->all());
 
-        // Validate the user input
-        // $validator = Validator::make($request->all(), [
-        //     'firstname' => 'required|string|max:255',
-        //     'middlename' => 'required|string|max:255',
-        //     'lastname' => 'required|string|max:255',
-        //     'phone' => 'required|string|max:15',
-        //     'username' => 'required|string|max:255|unique:users',
-        //     'email' => 'required|string|email|max:255|unique:users',
-        //     'password' => 'required|string|min:8',
-        //     'confirm' => 'required_with:password|string|same:password|min:8',
-        //     'gender' => 'required|string', // Validate gender as string
-        //     'residence' => 'required|string|max:255',
-        //     // 'residence' => 'required|array', // Change to array validation
-        //     // 'residence.*' => 'string', // Ensure each item in the array is a string
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
         $createdBy = 0;
 
         $userData =  [
             'username' => $request->username,
             'email' => $request->email,
             'remember_token' => (string)Str::random(10),
-            'email_verified_at' => Carbon::now(),
+            // 'email_verified_at' => Carbon::now(), //this is remove to send email verification
             'created_by' => $createdBy,
             'role' => 'Admin',
             'status' => $request->status ?: 'Active',
@@ -162,21 +142,12 @@ class AuthController extends Controller
             $userData['password'] = Hash::make($request->password);
         }
 
-        // Save the user to the database
-        // $user = User::create([
-        //     'username' => $request->username,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password), // Hash the password
-        //     'role' => 'Admin',  // Default role
-        //     'status' => 'Active', // Default status
-        //     'remember_token' => (string)Str::random(10),
-        //     'email_verified_at' => Carbon::now(),
-        //     'created_by' => 1,
-        // ]);
-
         $user = User::create(
             $userData
         );
+
+        //this will trigger the email verification email
+        event(new Registered($user));
 
         // Generate API token for the user
         if (!$request->id) { // Only generate a token if creating a new user
@@ -195,22 +166,10 @@ class AuthController extends Controller
             'gender' => $request->gender, // Make sure this is a string
             'residence' => $request->residence,
             'phone' => $request->phone,
-            'user_id' => $createdBy,  // Foreign key reference
+            'user_id' => $user->id,  // Foreign key reference
         ];
 
         $profile = Profile::create($profileData);
-        // Save the user's profile to the database  
-        // $profile = Profile::create([
-        //     'firstname' => $request->firstname,
-        //     'middlename' => $request->middlename,
-        //     'lastname' => $request->lastname,
-        //     'gender' => $request->gender, // Make sure this is a string
-        //     // 'residence' => json_encode($request->residence), // Save as JSON string
-        //     'residence' => $request->residence,
-        //     'phone' => $request->phone,
-        //     'user_id' => $user->id,  // Foreign key reference
-        //     'created_by' => $user->id,
-        // ]);
 
         // Return a success response
         $ret = [
@@ -221,7 +180,12 @@ class AuthController extends Controller
         if ($user || $profile) {
             $ret = [
                 "success" => true,
-                "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
+                "message" => "Data " . ($request->id ? "updated" : "created") . " successfully, Please check your Email for verification.",
+                "user" => [
+                    "id" => $user->id,
+                    "email" => $user->email,
+                    "email_verified_at" => $user->email_verified_at,
+                ],
                 'token' => $token ?? null, // Only include token if it's set
             ];
         }

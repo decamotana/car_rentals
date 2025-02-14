@@ -110,7 +110,7 @@ export default function PageSignUp() {
         data.append("username", values.username);
         data.append("email", values.email);
 
-        if (!params.id && values.password) {
+        if (!params.id || values.password) {
             data.append("password", values.password);
         }
 
@@ -123,41 +123,49 @@ export default function PageSignUp() {
             onSuccess: (res) => {
                 if (res.success) {
                     notification.success({
-                        message: "SignUp",
+                        message: "SignUp Successful",
                         description: res.message,
                     });
 
+                    navigate("/verify-email");
+
                     // Prepare login data (minimal fields)
-                    let loginData = new FormData();
-                    loginData.append("username", values.username);
-                    loginData.append("password", values.password);
+                    // let loginData = new FormData();
+                    // loginData.append("username", values.username);
+                    // loginData.append("password", values.password);
 
-                    mutateLogin(loginData, {
-                        onSuccess: (res) => {
-                            if (res.data) {
-                                localStorage.userdata = encrypt(
-                                    JSON.stringify(res.data)
-                                );
-                                localStorage.token = res.token;
+                    // mutateLogin(loginData, {
+                    //     onSuccess: (res) => {
+                    //         if (res.data && res.data.email_verified_at) {
+                    //             localStorage.userdata = encrypt(
+                    //                 JSON.stringify(res.data)
+                    //             );
+                    //             localStorage.token = res.token;
 
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 500);
+                    //             setTimeout(() => {
+                    //                 window.location.reload();
+                    //             }, 500);
 
-                                // notification.success({
-                                //     message: "Login",
-                                //     description: res.message,
-                                // });
-                                // Directly pass the login user data to navigate
-                                // navigate("/userDashboard", {
-                                //     state: { user: res.user },
-                                // });
-                            }
-                        },
-                        onError: (err) => {
-                            notificationErrors(err);
-                        },
-                    });
+                    //             // notification.success({
+                    //             //     message: "Login",
+                    //             //     description: res.message,
+                    //             // });
+                    //             // Directly pass the login user data to navigate
+                    //             // navigate("/userDashboard", {
+                    //             //     state: { user: res.user },
+                    //             // });
+                    //         } else {
+                    //             notification.error({
+                    //                 message: "Email Not Verified",
+                    //                 description:
+                    //                     "Please verify your email before logging in.",
+                    //             });
+                    //         }
+                    //     },
+                    //     onError: (err) => {
+                    //         notificationErrors(err);
+                    //     },
+                    // });
                 }
             },
             onError: (err) => {
