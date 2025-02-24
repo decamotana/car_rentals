@@ -17,6 +17,8 @@ import {
 } from "../../../../providers/CustomTableFilter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faMailbox,
+    faMailForward,
     faPencil,
     faTrash,
     faUserGear,
@@ -24,6 +26,8 @@ import {
 import notificationErrors from "../../../../providers/notificationErrors";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { faMailchimp } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope, faMessage } from "@fortawesome/pro-solid-svg-icons";
 
 export default function TableUser(props) {
     const { dataSource, tableFilter, setTableFilter, sortInfo } = props;
@@ -159,6 +163,23 @@ export default function TableUser(props) {
                                             </Button>
                                         </Tooltip>
                                     </Popconfirm>
+
+                                    <Tooltip title="Email user">
+                                        <Button
+                                            type="link"
+                                            className="text-primary"
+                                            onClick={() => {
+                                                navigate(
+                                                    `${location.pathname}/email/${record.id}`
+                                                );
+                                            }}
+                                            name="btn_email"
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faEnvelope}
+                                            />
+                                        </Button>
+                                    </Tooltip>
                                 </>
                             );
                         }}

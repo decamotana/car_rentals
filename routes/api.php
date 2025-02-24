@@ -59,18 +59,6 @@ Route::post('/email/resend', function (Request $request) {
 })->middleware(['throttle:6,1'])->name('verification.resend');
 
 Route::middleware(['auth:api'])->group(function () {
-    // UserController
-
-    // Route::post('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
-
-    // Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-    //     ->middleware(['signed'])
-    //     ->name('verification.verify');
-
-    // Route::post('/email/resend', [VerificationController::class, 'resend'])
-    //     ->middleware(['throttle:6,1'])
-    //     ->name('verification.resend');
-
 
     Route::apiResource('users', App\Http\Controllers\UserController::class);
     Route::get('active_Users', [\App\Http\Controllers\UserController::class, 'active_Users']);
@@ -91,6 +79,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('approve_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'update']);
     Route::post('approve_car_returned', [\App\Http\Controllers\CarBookingController::class, 'update']);
     Route::post('delete_car_reserved', [\App\Http\Controllers\CarBookingController::class, 'destroy']);
+
+    Route::post('sendEmail', [\App\Http\Controllers\MailController::class, 'sendEmail']);
 
     // END UserController
 

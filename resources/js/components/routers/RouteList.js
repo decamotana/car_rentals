@@ -3,6 +3,7 @@ import {
     faBooks,
     faCar,
     faCog,
+    faEnvelope,
     faFilePdf,
     faHome,
     faUsers,
@@ -42,6 +43,8 @@ import ReservationList from "../views/private/PageReservation/ReservationList";
 import { name } from "../providers/companyInfo";
 import BookedList from "../views/private/PageCars/BookedList";
 import VerifyEmail from "../views/clients/SignUp/VerifyEmail";
+import ModalFormEmail from "../views/private/PageEditProfile/components/ModalFormEmail";
+import PageUserSendEmailForm from "../views/private/PageUser/PageUserSendEmail";
 
 export default function RouteList() {
     return (
@@ -289,6 +292,30 @@ export default function RouteList() {
                             },
                         ]}
                         component={PageUserForm}
+                    />
+                }
+            />
+
+            <Route
+                path="/users/email/:id"
+                element={
+                    <PrivateRoute
+                        // moduleCode="M-02"
+                        moduleName="Send Email"
+                        title="Email"
+                        subtitle="EMAIL"
+                        pageId="PageUserSendEmail"
+                        pageHeaderIcon={faEnvelope}
+                        breadcrumb={[
+                            {
+                                name: "Users",
+                                link: "/users",
+                            },
+                            {
+                                name: "Send Email to user",
+                            },
+                        ]}
+                        component={PageUserSendEmailForm}
                     />
                 }
             />
