@@ -121,6 +121,8 @@ class UserController extends Controller
             'created_by' => $createdBy,
             'role' => $request->role ?: 'Admin',
             'status' => $request->status ?: 'Active',
+            'remember_token' => (string)Str::random(10),
+
         ];
 
 
@@ -145,25 +147,25 @@ class UserController extends Controller
         $data[$request->id ? 'updated_by' : 'created_by'] = $createdBy;
 
         $user = User::updateOrCreate(
-            ['id' => $request->id],
+            ['id' => $request->id ? $request->id : null],
             $data
         );
 
         // Generate API token for the user (for API authentication)
-        if (!$request->id) { // Only generate a token if creating a new user
-            $tokenResult = $user->createToken('auth_token');
-            $token = $tokenResult->accessToken;
+        // if (!$request->id) { // Only generate a token if creating a new user
+        //     $tokenResult = $user->createToken('auth_token');
+        //     $token = $tokenResult->accessToken;
 
-            // Return the response with the token
-            $ret['token'] = $token;
-        }
+        //     // Return the response with the token
+        //     $ret['remember_token'] = $token;
+        // }
 
 
         if ($user) {
             $ret = [
                 "success" => true,
                 "message" => "Data " . ($request->id ? "updated" : "created") . " successfully",
-                'token' => $token,
+                "data" => $user
             ];
         }
 

@@ -142,8 +142,6 @@ export default function PageUserForm() {
     );
 
     const onFinish = (values) => {
-        console.log("onFinish values", values);
-
         let data = new FormData();
         data.append("id", params.id ? params.id : "");
         data.append("role", values.role);
@@ -631,7 +629,26 @@ export default function PageUserForm() {
                             />
                         </Col>
 
-                        {params.id ? null : (
+                        {params.id ? (
+                            <Col
+                                xs={24}
+                                sm={24}
+                                md={24}
+                                lg={24}
+                                xl={24}
+                                xxl={24}
+                            >
+                                <Button
+                                    key={4}
+                                    className="btn-main-primary"
+                                    type="primary"
+                                    size="large"
+                                    onClick={() => form.submit()}
+                                >
+                                    Update
+                                </Button>
+                            </Col>
+                        ) : (
                             <Col
                                 xs={24}
                                 sm={24}

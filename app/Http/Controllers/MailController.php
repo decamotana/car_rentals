@@ -13,7 +13,7 @@ class MailController extends Controller
     {
         $details = [
             'email' => $request->email,
-            // 'subject' => $request->title,
+            'subject' => $request->subject,
             'body' => $request->body
         ];
 

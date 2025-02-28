@@ -7,6 +7,7 @@ import validateRules from "../../../../providers/validateRules";
 
 export default function ModalFormEmail(props) {
     const { toggleModalFormEmail, setToggleModalFormEmail } = props;
+    console.log("toggleModalFormEmail", toggleModalFormEmail);
     const [form] = Form.useForm();
 
     const { mutate: mutateEmail, loading: loadingEmail } = POST(
@@ -57,6 +58,7 @@ export default function ModalFormEmail(props) {
         if (toggleModalFormEmail.open) {
             form.setFieldsValue({
                 ...toggleModalFormEmail.data,
+                email: toggleModalFormEmail.data.email,
             });
         }
 
@@ -101,7 +103,13 @@ export default function ModalFormEmail(props) {
                 </Button>,
             ]}
         >
-            <Form form={form} onFinish={onFinish}>
+            <Form
+                form={form}
+                onFinish={onFinish}
+                initialValues={{
+                    email: "",
+                }}
+            >
                 <Form.Item
                     name="email"
                     rules={[validateRules.email, validateRules.required()]}

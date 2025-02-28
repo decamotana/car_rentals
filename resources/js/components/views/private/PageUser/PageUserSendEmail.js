@@ -18,7 +18,8 @@ import FloatTextArea from "../../../providers/FloatTextArea";
 import validateRules from "../../../providers/validateRules";
 import FloatDatePicker from "../../../providers/FloatDatePicker";
 
-export default function PageUserSendEmailForm() {
+export default function PageUserSendEmailForm(props) {
+    const { id } = props;
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
@@ -31,23 +32,28 @@ export default function PageUserSendEmailForm() {
         "user_send_email"
     );
 
+    const [email, setEmail] = useState("");
+
     GET(
         `api/users/${params.id}`,
         ["users_info", "check_user_permission"],
         (res) => {
+            console.log("resselected", res);
             if (res.data) {
-                // console.log("resdataselected", res.data);
+                console.log("resdataselected", res.data);
 
                 let data = res.data;
-                let email = data.email;
+                let emailValue = data.email;
+                console.log("email", emailValue);
 
-                form.setFieldValue({
-                    role: data.role,
-                    email,
+                form.setFieldsValue({
+                    email: emailValue, // Update the email field value
                 });
             }
         }
     );
+
+    // ...
 
     const onFinish = (values) => {
         if (!userId) {
@@ -57,15 +63,15 @@ export default function PageUserSendEmailForm() {
             });
             return;
         }
-        console.log("form values >", values);
 
         let data = new FormData();
         data.append("email", values.email);
-        // data.append("subject", values.subject);
+        data.append("subject", values.subject);
         data.append("body", values.body);
 
         mutateSendEmail(data, {
             onSuccess: (res) => {
+                form.resetFields();
                 if (res.success) {
                     navigate("/users");
                 }
@@ -96,7 +102,13 @@ export default function PageUserSendEmailForm() {
             </Col>
 
             <Col sm={24} md={24} lg={24} xl={24} xxl={24}>
-                <Form form={form} onFinish={onFinish}>
+                <Form
+                    form={form}
+                    onFinish={onFinish}
+                    initialValues={{
+                        email: form.getFieldValue("email"), // Use the email value fetched from API
+                    }}
+                >
                     <Row gutter={[12, 12]}>
                         <Col sm={24} md={24} lg={14} xl={14} xxl={14}>
                             <Collapse
@@ -144,7 +156,7 @@ export default function PageUserSendEmailForm() {
                                                     </Form.Item>
                                                 </Col>
 
-                                                {/* <Col
+                                                <Col
                                                     xs={24}
                                                     sm={24}
                                                     md={18}
@@ -169,7 +181,7 @@ export default function PageUserSendEmailForm() {
                                                             }}
                                                         />
                                                     </Form.Item>
-                                                </Col> */}
+                                                </Col>
 
                                                 <Col
                                                     xs={24}

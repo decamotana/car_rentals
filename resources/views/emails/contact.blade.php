@@ -6,10 +6,11 @@
 </head>
 
 <body>
-    <h2>Contact Form Submission</h2>
+    <h2>J&A Car Rental</h2>
     <p><strong>Email:</strong> {{ $data['email'] }}</p>
     <p><strong>Subject:</strong> {{ $data['subject'] }}</p>
     <p><strong>Body:</strong> {{ $data['body'] }}</p>
+    <p>this message is no-reply</p>
 </body>
 
 </html>
